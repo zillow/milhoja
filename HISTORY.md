@@ -2,7 +2,7 @@
 
 ## 0.1.2 (???)
 
-- Adds in remote fetching of `origin/template` branch during upgrades. (See [#10](https://github.com/zillow/battenberg/pull/10))
+- Adds in remote fetching of `origin/template` branch during upgrades. (See [#12](https://github.com/zillow/battenberg/pull/12))
 
 ## 0.1.1 (2019-10-17)
 
