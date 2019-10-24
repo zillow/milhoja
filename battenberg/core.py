@@ -39,7 +39,7 @@ class Battenberg:
         # First try to pull it from the remote origin/TEMPLATE_BRANCH
         keypair = construct_keypair()
         self.repo.remotes['origin'].fetch([TEMPLATE_BRANCH],
-                                        callbacks=RemoteCallbacks(credentials=keypair))
+                                           callbacks=RemoteCallbacks(credentials=keypair))
         self.repo.references.create(
             f'refs/heads/{TEMPLATE_BRANCH}',
             self.repo.references.get(f'refs/remotes/origin/{TEMPLATE_BRANCH}').target
