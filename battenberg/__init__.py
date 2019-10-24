@@ -1,7 +1,11 @@
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 
 from battenberg.core import Battenberg
+from battenberg.utils import construct_keypair
 
 
-__all__ = [Battenberg]
+__all__ = [
+    Battenberg,
+    construct_keypair
+]

@@ -12,10 +12,10 @@ from battenberg.utils import open_repository, open_or_init_repository
 from battenberg.errors import BattenbergException
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('battenberg')
 # Ensure we always receive debug messages.
 handler = logging.StreamHandler()
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 

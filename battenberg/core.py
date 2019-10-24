@@ -5,6 +5,7 @@ import shutil
 from typing import Any, Dict
 
 from pygit2 import (
+    RemoteCallbacks,
     Repository,
     GIT_MERGE_ANALYSIS_UP_TO_DATE,
     GIT_MERGE_ANALYSIS_FASTFORWARD,
@@ -18,6 +19,7 @@ from battenberg.errors import (
     TemplateNotFoundException
 )
 from battenberg.temporary_worktree import TemporaryWorktree
+from battenberg.utils import construct_keypair
 
 
 WORKTREE_NAME = 'templating'
@@ -71,7 +73,8 @@ class Battenberg:
             # If we have a merge target, ensure we have that branch and have switched to it
             # before continuing with merging.
             merge_target_ref = f'refs/heads/{merge_target}'
-            self.repo.branches.local.create(merge_target, self.repo.get(self.repo.head.target))
+            if merge_target not in self.repo.listall_branches():
+                self.repo.branches.local.create(merge_target, self.repo.get(self.repo.head.target))
             self.repo.checkout(merge_target_ref)
 
         analysis, _ = self.repo.merge_analysis(branch.target, merge_target_ref)
@@ -171,9 +174,19 @@ class Battenberg:
         if extra_context is None:
             extra_context = {}
 
-        # Assert template branch exist or raise an error
         if not self.is_installed():
-            raise TemplateNotFoundException()
+            # First try to pull it from the remote origin/TEMPLATE_BRANCH
+            keypair = construct_keypair()
+            self.repo.remotes['origin'].fetch([TEMPLATE_BRANCH],
+                                            callbacks=RemoteCallbacks(credentials=keypair))
+            self.repo.references.create(
+                f'refs/heads/{TEMPLATE_BRANCH}',
+                self.repo.references.get(f'refs/remotes/origin/{TEMPLATE_BRANCH}').target
+            )
+
+            # Assert template branch exist or raise an error
+            if not self.is_installed():
+                raise TemplateNotFoundException()
 
         # Get last context used to apply template
         context = self.get_context(context_file)
