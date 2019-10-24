@@ -1,6 +1,7 @@
+import os
 from unittest.mock import patch
 import pytest
-from battenberg.utils import open_repository, open_or_init_repository
+from battenberg.utils import open_repository, open_or_init_repository, construct_keypair
 
 
 @pytest.fixture
@@ -45,3 +46,20 @@ def test_open_or_init_repository_initializes_repo(init_repository, Repository, d
         repo.index.write_tree.return_value,
         []
     )
+
+
+@patch('battenberg.utils.Keypair')
+def test_construct_keypair_defaults(Keypair):
+    construct_keypair()
+    user_home = os.path.expanduser('~')
+    Keypair.assert_called_once_with('git', f'{user_home}/.ssh/id_rsa.pub',
+                                    f'{user_home}/.ssh/id_rsa', '')
+
+
+@patch('battenberg.utils.Keypair')
+def test_construct_keypair(Keypair):
+    public_key_path = 'test-public_key_path'
+    private_key_path = 'test-private_key_path'
+    passphrase = 'test-passphrase'
+    construct_keypair(public_key_path, private_key_path, passphrase)
+    Keypair.assert_called_once_with('git', public_key_path, private_key_path, passphrase)

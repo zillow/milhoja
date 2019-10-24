@@ -35,6 +35,16 @@ class Battenberg:
     def is_installed(self) -> bool:
         return TEMPLATE_BRANCH in self.repo.listall_branches()
 
+    def fetch_remote_template(self):
+        # First try to pull it from the remote origin/TEMPLATE_BRANCH
+        keypair = construct_keypair()
+        self.repo.remotes['origin'].fetch([TEMPLATE_BRANCH],
+                                        callbacks=RemoteCallbacks(credentials=keypair))
+        self.repo.references.create(
+            f'refs/heads/{TEMPLATE_BRANCH}',
+            self.repo.references.get(f'refs/remotes/origin/{TEMPLATE_BRANCH}').target
+        )
+
     def cookiecut(self, cookiecutter_kwargs: dict, worktree: TemporaryWorktree):
         cookiecutter(
             replay=False,
@@ -175,17 +185,10 @@ class Battenberg:
             extra_context = {}
 
         if not self.is_installed():
-            # First try to pull it from the remote origin/TEMPLATE_BRANCH
-            keypair = construct_keypair()
-            self.repo.remotes['origin'].fetch([TEMPLATE_BRANCH],
-                                            callbacks=RemoteCallbacks(credentials=keypair))
-            self.repo.references.create(
-                f'refs/heads/{TEMPLATE_BRANCH}',
-                self.repo.references.get(f'refs/remotes/origin/{TEMPLATE_BRANCH}').target
-            )
-
-            # Assert template branch exist or raise an error
-            if not self.is_installed():
+            if f'origin/{TEMPLATE_BRANCH}' in self.repo.listall_branches():
+                self.fetch_remote_template()
+            else:
+                # Assert template branch exist or raise an error
                 raise TemplateNotFoundException()
 
         # Get last context used to apply template

@@ -53,6 +53,17 @@ def test_upgrade_raises_template_not_found(repo):
         battenberg.upgrade()
 
 
+# TODO Fix this test.
+# def test_upgrade_fetches_remote_template(installed_repo, template_repo):
+#     # installed_repo.remotes.create('origin', 'git@github.com:zillow/battenberg.git')
+#     template_oid = installed_repo.references.get('refs/heads/template').target
+#     installed_repo.branches.remote.create('origin/template', installed_repo[template_oid])
+#     installed_repo.branches.local.delete('template')
+
+#     battenberg = Battenberg(installed_repo)
+#     battenberg.upgrade(checkout='upgrade', no_input=True)
+
+
 def test_upgrade(installed_repo, template_repo):
     battenberg = Battenberg(installed_repo)
     battenberg.upgrade(checkout='upgrade', no_input=True)
