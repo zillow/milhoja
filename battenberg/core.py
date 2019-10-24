@@ -185,7 +185,7 @@ class Battenberg:
             extra_context = {}
 
         if not self.is_installed():
-            if f'origin/{TEMPLATE_BRANCH}' in self.repo.listall_branches():
+            if self.repo.remotes['origin']:
                 self.fetch_remote_template()
             else:
                 # Assert template branch exist or raise an error
