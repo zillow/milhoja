@@ -1,6 +1,6 @@
 # Release History
 
-## 0.1.2 (???)
+## 0.2.0 (???)
 
 - Adds in remote fetching of `origin/template` branch during upgrades. (See [#12](https://github.com/zillow/battenberg/pull/12))
 
