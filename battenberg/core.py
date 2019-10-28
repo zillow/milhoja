@@ -39,7 +39,7 @@ class Battenberg:
         # First try to pull it from the remote origin/TEMPLATE_BRANCH
         keypair = construct_keypair()
         self.repo.remotes['origin'].fetch([TEMPLATE_BRANCH],
-                                           callbacks=RemoteCallbacks(credentials=keypair))
+                                          callbacks=RemoteCallbacks(credentials=keypair))
         self.repo.references.create(
             f'refs/heads/{TEMPLATE_BRANCH}',
             self.repo.references.get(f'refs/remotes/origin/{TEMPLATE_BRANCH}').target
@@ -185,11 +185,12 @@ class Battenberg:
             extra_context = {}
 
         if not self.is_installed():
-            if self.repo.remotes['origin']:
+            try:
                 self.fetch_remote_template()
-            else:
-                # Assert template branch exist or raise an error
-                raise TemplateNotFoundException()
+            except KeyError as e:
+                # Cannot find the origin remote branch.
+                logger.error(e)
+                raise TemplateNotFoundException() from e
 
         # Get last context used to apply template
         context = self.get_context(context_file)

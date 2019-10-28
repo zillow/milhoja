@@ -86,9 +86,6 @@ To get set up run:
 python3 -m venv env
 source env/bin/activate
 
-# In the short term we're loading cookiecutter from a forked repo, we need an up-to-date pip version to get this dependency.
-pip install --upgrade pip
-
 # Install in editable mode so you get the updates propagated.
 pip install -e .
 

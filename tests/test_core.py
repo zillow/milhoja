@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import pytest
 from pygit2 import Reference, Repository
 from battenberg.errors import TemplateConflictException, TemplateNotFoundException
@@ -48,6 +49,7 @@ def test_install_raises_template_conflict(repo, template_repo):
 
 
 def test_upgrade_raises_template_not_found(repo):
+    repo.remotes.delete('origin')
     battenberg = Battenberg(repo)
     with pytest.raises(TemplateNotFoundException):
         battenberg.upgrade()
@@ -59,8 +61,14 @@ def test_upgrade_fetches_remote_template(installed_repo, template_repo):
     installed_repo.branches.remote.create('origin/template', installed_repo[template_oid])
     installed_repo.branches.local.delete('template')
 
-    battenberg = Battenberg(installed_repo)
-    battenberg.upgrade(checkout='upgrade', no_input=True)
+    # Couldn't work out a nice way to neatly construct remote branches, resort to mocking.
+    with patch.object(installed_repo.references, 'get') as get_mock:
+        get_mock.return_value.target = template_oid
+
+        battenberg = Battenberg(installed_repo)
+        battenberg.upgrade(checkout='upgrade', no_input=True)
+
+        get_mock.assert_called_once_with('refs/remotes/origin/template')
 
 
 def test_upgrade(installed_repo, template_repo):
