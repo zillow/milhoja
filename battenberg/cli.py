@@ -4,12 +4,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # noqa: E402
 
 
 import logging
+import subprocess
 import click
 from cookiecutter.cli import validate_extra_context
 from cookiecutter.exceptions import CookiecutterException
 from battenberg.core import Battenberg
 from battenberg.utils import open_repository, open_or_init_repository
-from battenberg.errors import BattenbergException
+from battenberg.errors import BattenbergException, MergeConflictException
 
 
 logger = logging.getLogger('battenberg')
@@ -33,7 +34,7 @@ logger.addHandler(handler)
     help='Enables the debug logging.'
 )
 @click.pass_context
-def main(ctx, o, verbose):
+def main(ctx, o: str, verbose: bool):
     """
     \f
 
@@ -66,7 +67,7 @@ def main(ctx, o, verbose):
     help='Do not prompt for parameters and only use cookiecutter.json file content',
 )
 @click.pass_context
-def install(ctx, template, **kwargs):
+def install(ctx, template: str, **kwargs):
     try:
         battenberg = Battenberg(open_or_init_repository(ctx.obj['target']))
         battenberg.install(template, **kwargs)
@@ -102,5 +103,11 @@ def upgrade(ctx, **kwargs):
     try:
         battenberg = Battenberg(open_repository(ctx.obj['target']))
         battenberg.upgrade(**kwargs)
+    except MergeConflictException as error:
+        # Just run "git status" in a subprocess so we don't have to re-implement the formatting
+        # logic atop pygit2.
+        completed_process = subprocess.run(['git', 'status'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        print(completed_process.stdout.decode('utf-8'))
+        print('Cannot merge upgrade automatically, please manually resolve the conflicts')
     except (BattenbergException, CookiecutterException) as error:
         raise click.ClickException from error

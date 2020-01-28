@@ -98,7 +98,6 @@ class Battenberg:
             logger.info('The branch is already up to date, no need to merge.')
 
         elif analysis & GIT_MERGE_ANALYSIS_FASTFORWARD or analysis & GIT_MERGE_ANALYSIS_NORMAL:
-
             # Ensure we're merging into the right
             self.repo.checkout(merge_target_ref)
 
