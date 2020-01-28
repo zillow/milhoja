@@ -103,10 +103,11 @@ def upgrade(ctx, **kwargs):
     try:
         battenberg = Battenberg(open_repository(ctx.obj['target']))
         battenberg.upgrade(**kwargs)
-    except MergeConflictException as error:
+    except MergeConflictException:
         # Just run "git status" in a subprocess so we don't have to re-implement the formatting
         # logic atop pygit2.
-        completed_process = subprocess.run(['git', 'status'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        completed_process = subprocess.run(['git', 'status'], stdout=subprocess.PIPE,
+                                           stderr=subprocess.STDOUT)
         print(completed_process.stdout.decode('utf-8'))
         print('Cannot merge upgrade automatically, please manually resolve the conflicts')
     except (BattenbergException, CookiecutterException) as error:
