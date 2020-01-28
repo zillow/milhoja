@@ -108,7 +108,8 @@ def upgrade(ctx, **kwargs):
         # logic atop pygit2.
         completed_process = subprocess.run(['git', 'status'], stdout=subprocess.PIPE,
                                            stderr=subprocess.STDOUT)
-        print(completed_process.stdout.decode('utf-8'))
-        print('Cannot merge upgrade automatically, please manually resolve the conflicts')
+        click.echo(completed_process.stdout.decode('utf-8'))
+        click.echo('Cannot merge upgrade automatically, please manually resolve the conflicts')
+        sys.exit(1)  # Ensure we exit with a failure code.
     except (BattenbergException, CookiecutterException) as error:
         raise click.ClickException from error

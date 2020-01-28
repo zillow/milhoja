@@ -101,6 +101,8 @@ class Battenberg:
             # Ensure we're merging into the right
             self.repo.checkout(merge_target_ref)
 
+            import pdb; pdb.set_trace()
+
             # Let's merge template changes using --allow-unrelated-histories. This will allow
             # the disjoint histories to be merged successfully. If you want to manually replicate
             # this option please run:
@@ -146,19 +148,19 @@ class Battenberg:
 
         Args:
             template: The path (either local or git) to the template project. It must follow
-            the cookiecutter format to be compatible with battenberg.
+                the cookiecutter format to be compatible with battenberg.
             checkout: The new state to pull from the template, normally this will be a git tag on
-            the template repo.
+                the template repo.
             no_input: Whether to ask the user to answer the template questions again or take the
-            default answers from the templates "cookiecutter.json".
+                default answers from the templates "cookiecutter.json".
             extra_context: A set of template overrides that will supercede those found in the
-            "context_file" or those provided by answering the template questionnaire.
+                "context_file" or those provided by answering the template questionnaire.
 
         Raises:
             MergeConflictException: Thrown when an upgrade results in merge conflicts between the
-            template branch and the merge-target branch.
+                template branch and the merge-target branch.
             TemplateConflictException: When the repo already contains a template branch. If you
-            encounter this please run "battenberg upgrade" instead.
+                encounter this please run "battenberg upgrade" instead.
         """
 
         if extra_context is None:
@@ -214,20 +216,20 @@ class Battenberg:
 
         Args:
             checkout: The new state to pull from the template, normally this will be a git tag on
-            the template repo.
+                the template repo.
             no_input: Whether to ask the user to answer the template questions again or take the
-            answers from the template context defined in "context_file".
+                answers from the template context defined in "context_file".
             merge_target: A branch to checkout other than the current HEAD. Useful if you're
-            upgrading a project you do not directly own.
+                upgrading a project you do not directly own.
             context_file: Where battenberg should look to read the template context.
-            extra_context: A set of template overrides that will supercede those found in the
-            "context_file" or those provided by answering the template questionnaire.
+                extra_context: A set of template overrides that will supercede those found in the
+                "context_file" or those provided by answering the template questionnaire.
 
         Raises:
             MergeConflictException: Thrown when an upgrade results in merge conflicts between the
-            template branch and the merge-target branch.
+                template branch and the merge-target branch.
             TemplateNotFoundException: When the repo does not already contain a template branch. If
-            you encounter this please run "battenberg install" instead.
+                you encounter this please run "battenberg install" instead.
         """
 
         if extra_context is None:
