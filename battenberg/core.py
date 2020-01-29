@@ -101,8 +101,6 @@ class Battenberg:
             # Ensure we're merging into the right
             self.repo.checkout(merge_target_ref)
 
-            import pdb; pdb.set_trace()
-
             # Let's merge template changes using --allow-unrelated-histories. This will allow
             # the disjoint histories to be merged successfully. If you want to manually replicate
             # this option please run:
@@ -140,7 +138,7 @@ class Battenberg:
         else:
             raise BattenbergException(f'Unknown merge analysis result: {analysis}')
 
-    def install(self, template: str, checkout: str = 'master', extra_context: Dict = None,
+    def install(self, template: str, checkout: str = 'master',
                 no_input: bool = False):
         """Creates a fresh template install within the supplied repo.
 
@@ -153,8 +151,6 @@ class Battenberg:
                 the template repo.
             no_input: Whether to ask the user to answer the template questions again or take the
                 default answers from the templates "cookiecutter.json".
-            extra_context: A set of template overrides that will supercede those found in the
-                "context_file" or those provided by answering the template questionnaire.
 
         Raises:
             MergeConflictException: Thrown when an upgrade results in merge conflicts between the
@@ -162,9 +158,6 @@ class Battenberg:
             TemplateConflictException: When the repo already contains a template branch. If you
                 encounter this please run "battenberg upgrade" instead.
         """
-
-        if extra_context is None:
-            extra_context = {}
 
         # Assert template branch doesn't exist or raise conflict
         if self.is_installed():
@@ -175,8 +168,7 @@ class Battenberg:
             cookiecutter_kwargs = {
                 'template': template,
                 'checkout': checkout,
-                'no_input': no_input,
-                'extra_context': extra_context
+                'no_input': no_input
             }
             self._cookiecut(cookiecutter_kwargs, worktree)
 
@@ -207,7 +199,7 @@ class Battenberg:
         self._merge_template_branch(f'Installed template \'{template}\'')
 
     def upgrade(self, checkout: str = 'master', no_input: bool = True, merge_target: str = None,
-                context_file: str = '.cookiecutter.json', extra_context: Dict = None):
+                context_file: str = '.cookiecutter.json'):
         """Updates a repo using the found template context.
 
         Generates and applies any updates from the current repo state to the template state defined
@@ -222,8 +214,6 @@ class Battenberg:
             merge_target: A branch to checkout other than the current HEAD. Useful if you're
                 upgrading a project you do not directly own.
             context_file: Where battenberg should look to read the template context.
-                extra_context: A set of template overrides that will supercede those found in the
-                "context_file" or those provided by answering the template questionnaire.
 
         Raises:
             MergeConflictException: Thrown when an upgrade results in merge conflicts between the
@@ -231,9 +221,6 @@ class Battenberg:
             TemplateNotFoundException: When the repo does not already contain a template branch. If
                 you encounter this please run "battenberg install" instead.
         """
-
-        if extra_context is None:
-            extra_context = {}
 
         if not self.is_installed():
             try:
@@ -250,10 +237,6 @@ class Battenberg:
         template = context['_template']
         logger.debug(f'Found template: {template}')
 
-        # Merge original context and extra_context (priority to extra_context)
-        context.update(extra_context)
-        logger.debug(f'Context incl. extra: {context}')
-
         # Create temporary EMPTY worktree
         with TemporaryWorktree(self.repo, WORKTREE_NAME) as worktree:
             # Set HEAD to template branch
@@ -263,8 +246,7 @@ class Battenberg:
             cookiecutter_kwargs = {
                 'template': template,
                 'checkout': checkout,
-                'no_input': no_input,
-                'extra_context': context
+                'no_input': no_input
             }
             self._cookiecut(cookiecutter_kwargs, worktree)
 

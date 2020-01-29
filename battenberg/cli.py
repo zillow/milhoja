@@ -6,11 +6,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # noqa: E402
 import logging
 import subprocess
 import click
-from cookiecutter.cli import validate_extra_context
-from cookiecutter.exceptions import CookiecutterException
 from battenberg.core import Battenberg
 from battenberg.utils import open_repository, open_or_init_repository
-from battenberg.errors import BattenbergException, MergeConflictException
+from battenberg.errors import MergeConflictException
 
 
 logger = logging.getLogger('battenberg')
@@ -56,7 +54,6 @@ def main(ctx, o: str, verbose: bool):
 
 @main.command()
 @click.argument('template')
-@click.argument('extra_context', nargs=-1, callback=validate_extra_context)
 @click.option(
     '--checkout',
     help='branch, tag or commit to checkout',
@@ -68,15 +65,11 @@ def main(ctx, o: str, verbose: bool):
 )
 @click.pass_context
 def install(ctx, template: str, **kwargs):
-    try:
-        battenberg = Battenberg(open_or_init_repository(ctx.obj['target']))
-        battenberg.install(template, **kwargs)
-    except (BattenbergException, CookiecutterException) as error:
-        raise click.ClickException from error
+    battenberg = Battenberg(open_or_init_repository(ctx.obj['target']))
+    battenberg.install(template, **kwargs)
 
 
 @main.command()
-@click.argument('extra_context', nargs=-1, callback=validate_extra_context)
 @click.option(
     '--checkout',
     help='branch, tag or commit to checkout',
@@ -111,5 +104,3 @@ def upgrade(ctx, **kwargs):
         click.echo(completed_process.stdout.decode('utf-8'))
         click.echo('Cannot merge upgrade automatically, please manually resolve the conflicts')
         sys.exit(1)  # Ensure we exit with a failure code.
-    except (BattenbergException, CookiecutterException) as error:
-        raise click.ClickException from error

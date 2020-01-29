@@ -7,6 +7,7 @@ from types import TracebackType
 from typing import List, Optional, Type
 import pytest
 from pygit2 import Repository, init_repository
+from battenberg.core import Battenberg
 
 
 class TemporaryRepository:
@@ -78,4 +79,11 @@ def template_repo() -> Repository:
     )
     repo.branches.local.create('upgrade', repo[upgrade_commit_id])
 
+    return repo
+
+
+@pytest.fixture
+def installed_repo(repo: Repository, template_repo: Repository) -> Repository:
+    battenberg = Battenberg(repo)
+    battenberg.install(template_repo.workdir, no_input=True)
     return repo
