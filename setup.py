@@ -18,7 +18,7 @@ install_requires = [
     'cookiecutter>=1.6.0',
     # You'll also need to install libgit2 to get this to work.
     # See instructions here: https://www.pygit2.org/install.html
-    'pygit2>=0.28.0'
+    'pygit2>=0.28.0,<1.0'
 ]
 
 setup(
