@@ -3,9 +3,6 @@
 ## 0.2.3 (2020-05-19)
 
 - Refactor removal of top-level directory after cookiecutting to avoid collisions. (See [#15](https://github.com/zillow/battenberg/pull/15))
-
-## 0.x.x (YYYY-MM-DD)
-
 - Set upper limit on pygit2 dependency (See [#14](https://github.com/zillow/battenberg/pull/14))
 
 ## 0.2.2 (2020-01-29)
