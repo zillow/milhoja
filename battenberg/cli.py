@@ -1,14 +1,14 @@
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # noqa: E402
-
-
 import logging
 import subprocess
 import click
+
 from battenberg.core import Battenberg
 from battenberg.utils import open_repository, open_or_init_repository
 from battenberg.errors import MergeConflictException
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # noqa: E402
 
 
 logger = logging.getLogger('battenberg')
