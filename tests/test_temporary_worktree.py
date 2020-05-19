@@ -65,4 +65,4 @@ def test_initializes_empty_worktree(repo, worktree_name, empty, dir_contents):
         # Not an easy way to compare apples to apples here as it constructs the worktree
         # and immediately empties it in the same function. Some work todo here to make
         # this a little cleaner in the future I think.
-        assert os.listdir(tmp_worktree.path) == dir_contents
+        assert sorted(os.listdir(tmp_worktree.path)) == sorted(dir_contents)

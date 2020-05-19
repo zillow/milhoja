@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import shutil
+import tempfile
 from typing import Any, Dict
 
 from pygit2 import (
@@ -51,30 +52,18 @@ class Battenberg:
         )
 
     def _cookiecut(self, cookiecutter_kwargs: dict, worktree: TemporaryWorktree):
-        cookiecutter(
-            replay=False,
-            overwrite_if_exists=True,
-            output_dir=worktree.path,
-            **cookiecutter_kwargs
-        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            cookiecutter(
+                replay=False,
+                overwrite_if_exists=True,
+                output_dir=tmpdir,
+                **cookiecutter_kwargs
+            )
 
-        # Ensure the worktree looks as we'd expect.
-        NUM_RENDERED_DIRECTORIES = 2
-        worktree_ls = os.listdir(worktree.path)
-        if len(worktree_ls) != NUM_RENDERED_DIRECTORIES:
-            # There should only be ".git" & "{{cookiecutter.top_level_name}}" directories.
-            raise BattenbergException(
-                f'Unexpected file structure in temporary worktree: {worktree_ls}')
-
-        # Now to strip the level top level directory from the rendered template in the
-        # temporary worktree path.
-        rendered_template_dir = next(d for d in worktree_ls if d != '.git')
-        rendered_template_path = os.path.join(worktree.path, rendered_template_dir)
-        for file in os.listdir(rendered_template_path):
-            shutil.move(os.path.join(rendered_template_path, file), worktree.path)
-        else:
-            # Finally clean up the old rendered template path.
-            shutil.rmtree(rendered_template_path)
+            # Cookiecutter guarantees a single top-level directory after templating.
+            top_level_dir = os.path.join(tmpdir, os.listdir(tmpdir)[0])
+            for f in os.listdir(top_level_dir):
+                shutil.move(os.path.join(top_level_dir, f), worktree.path)
 
     def _get_context(self, context_file: str, base_path: str = None) -> Dict[str, Any]:
         with open(os.path.join(base_path or self.repo.workdir, context_file)) as f:
