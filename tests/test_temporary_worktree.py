@@ -53,16 +53,16 @@ def test_raises_worktree_error(mkdtemp, repo, worktree_name, worktree_path):
 
 
 @pytest.mark.parametrize('empty,dir_contents', (
-    (True, ['.git']),
-    (False, ['.gitignore', '.git', 'hello.txt'])
+    (True, {'.git'}),
+    (False, {'.gitignore', '.git', 'hello.txt'})
 ))
 def test_initializes_empty_worktree(repo, worktree_name, empty, dir_contents):
     # Loop over all the entries in the unstaged tree.
-    get_tree_entries = lambda r: [entry.name for entry in r[r.head.target].tree]
-    assert get_tree_entries(repo) == ['.gitignore', 'hello.txt']
+    get_tree_entries = lambda r: {entry.name for entry in r[r.head.target].tree}
+    assert get_tree_entries(repo) == {'.gitignore', 'hello.txt'}
 
     with TemporaryWorktree(repo, worktree_name, empty=empty) as tmp_worktree:
         # Not an easy way to compare apples to apples here as it constructs the worktree
         # and immediately empties it in the same function. Some work todo here to make
         # this a little cleaner in the future I think.
-        assert sorted(os.listdir(tmp_worktree.path)) == sorted(dir_contents)
+        assert set(os.listdir(tmp_worktree.path)) == dir_contents
