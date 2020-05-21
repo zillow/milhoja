@@ -19,7 +19,6 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
-
 @click.group()
 @click.option(
     '-O',
