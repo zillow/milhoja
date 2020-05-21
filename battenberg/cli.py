@@ -11,11 +11,13 @@ from battenberg.errors import MergeConflictException
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # noqa: E402
 
 
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger('battenberg')
 # Ensure we always receive debug messages.
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
+
 
 
 @click.group()

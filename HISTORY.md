@@ -1,5 +1,9 @@
 # Release History
 
+## 0.2.XX (XXXX-XX-XX)
+
+- Add in better debug logging (See [#14](https://github.com/zillow/battenberg/pull/16))
+
 ## 0.2.3 (2020-05-19)
 
 - Refactor removal of top-level directory after cookiecutting to avoid collisions. (See [#15](https://github.com/zillow/battenberg/pull/15))

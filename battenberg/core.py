@@ -53,6 +53,7 @@ class Battenberg:
 
     def _cookiecut(self, cookiecutter_kwargs: dict, worktree: TemporaryWorktree):
         with tempfile.TemporaryDirectory() as tmpdir:
+            logger.debug(f"Cookiecutting {cookiecutter_kwargs['template']} into {tmpdir}")
             cookiecutter(
                 replay=False,
                 overwrite_if_exists=True,
@@ -61,6 +62,7 @@ class Battenberg:
             )
 
             # Cookiecutter guarantees a single top-level directory after templating.
+            logger.debug('Shifting directories down a level')
             top_level_dir = os.path.join(tmpdir, os.listdir(tmpdir)[0])
             for f in os.listdir(top_level_dir):
                 shutil.move(os.path.join(top_level_dir, f), worktree.path)
@@ -96,6 +98,7 @@ class Battenberg:
             #
             #     "git merge --allow-unrelated-histories template"
             #
+            logger.debug('Forcing merge of template branch into target branch.')
             self.repo.merge(branch.target)
 
             # If there is a conflict we should error and let the user manually resolve it.
@@ -124,6 +127,8 @@ class Battenberg:
             # worktree into the main HEAD.
             self.repo.state_cleanup()
             self.repo.checkout('HEAD')
+
+            logger.debug('Successfully applied changes.')
         else:
             raise BattenbergException(f'Unknown merge analysis result: {analysis}')
 
@@ -160,6 +165,7 @@ class Battenberg:
                 'no_input': no_input
             }
             self._cookiecut(cookiecutter_kwargs, worktree)
+            logger.debug(f"Successfully cookiecut {cookiecutter_kwargs['template']} into {worktree.path}.")
 
             # Stage changes
             worktree.repo.index.add_all()
@@ -185,6 +191,7 @@ class Battenberg:
             worktree.repo.set_head(branch.name)
 
         # Let's merge our changes into HEAD
+        logger.debug('Merging changes into HEAD.')
         self._merge_template_branch(f'Installed template \'{template}\'')
 
     def upgrade(self, checkout: str = 'master', no_input: bool = True, merge_target: str = None,

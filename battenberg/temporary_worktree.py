@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+import logging
 from types import TracebackType
 from typing import Optional, Type
 
@@ -10,6 +11,9 @@ from battenberg.errors import (
     WorktreeConflictException,
     WorktreeException
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class TemporaryWorktree:
@@ -28,6 +32,8 @@ class TemporaryWorktree:
         self.empty = empty
 
     def __enter__(self) -> 'TemporaryWorktree':
+        logger.debug(f'Creating temporary worktree at {self.path}.')
+
         if self.upstream.head_is_unborn:
             raise RepositoryEmptyException()
 
@@ -47,14 +53,19 @@ class TemporaryWorktree:
                 else:
                     os.remove(os.path.join(self.path, entry.name))
 
+        logger.debug(f'Successfully created temporary worktree at {self.path}.')
+
         return self
 
     def __exit__(self, type: Optional[Type[BaseException]], value: Optional[BaseException],
                  traceback: TracebackType):
-        shutil.rmtree(self.tmp)
+        logger.debug(f'Removing temporary worktree at {self.path}.')
+        # shutil.rmtree(self.tmp)
 
         # Prune temp worktree
         if self.worktree is not None:
             self.worktree.prune(True)
 
         self.upstream.lookup_branch(self.name).delete()
+
+        logger.debug(f'Successfully removed temporary worktree at {self.path}.')
