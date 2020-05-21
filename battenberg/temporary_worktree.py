@@ -60,7 +60,7 @@ class TemporaryWorktree:
     def __exit__(self, type: Optional[Type[BaseException]], value: Optional[BaseException],
                  traceback: TracebackType):
         logger.debug(f'Removing temporary worktree at {self.path}.')
-        # shutil.rmtree(self.tmp)
+        shutil.rmtree(self.tmp)
 
         # Prune temp worktree
         if self.worktree is not None:
