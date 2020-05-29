@@ -16,7 +16,7 @@ pip install battenberg
 ```
 
 If you're on Mac OS X or Windows please follow the [installation guides](https://www.pygit2.org/install.html#) in the `pygit2` documentation
-as well as `battenberg` relies on `libgit2` which needs to be installed first.
+as well as `battenberg` relies on `libgit2` which needs to be installed first. **Please install `libgit2 >= 1.0`.**
 
 ## Prerequistes
 
