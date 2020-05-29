@@ -1,8 +1,8 @@
 # Release History
 
-## 0.3.0 (XXXX-XX-XX)
+## 0.3.0 (2020-05-29)
 
-- Update `pygit2` dependency to `>= 1.0`, can now rely on `libgit2 >= 1.0` too. (See [#17](https://github.com/zillow/battenberg/pull/17))
+- Update `pygit2` dependency to `>= 1.0`, can now rely on `libgit2 >= 1.0` too. (See [#18](https://github.com/zillow/battenberg/pull/18))
 - Add in better debug logging (See [#16](https://github.com/zillow/battenberg/pull/16))
 
 ## 0.2.3 (2020-05-19)
