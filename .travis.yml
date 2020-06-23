@@ -1,4 +1,7 @@
-matrix:
+language: python
+os: linux
+dist: xenial
+jobs:
   include:
   - name: "Python 3.6 on Linux"
     os: linux
@@ -18,15 +21,18 @@ matrix:
   - name: "Python 3.6 on Mac OS X 10.13"
     os: osx
     osx_image: "xcode9.4"  # High Sierra 10.13
-    <<: *py36
+    env:
+      <<: *py36
   - name: "Python 3.7 on Mac OS X 10.14"
     os: osx
     osx_image: "xcode10.2"  # Mojave 10.14
-    <<: *py37
+    env:
+      <<: *py37
   - name: "Python 3.8 on Mac OS X 10.15"
     os: osx
     osx_image: "xcode11.4"  # Catalina 10.15
-    <<: *py38
+    env:
+      <<: *py38
 env:
   global:
     LIBGIT2: "~/libgit2/_install/"
@@ -55,7 +61,7 @@ script:
 - echo "Script ending"
 deploy:
   provider: pypi
-  user: __token__
+  username: __token__
   password:
     # This is an encrypted copy of the PyPI API token which you get from your PyPI Account Settings page.
     # Generated using: travis encrypt <pypi api token> --add deploy.password
