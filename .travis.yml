@@ -1,46 +1,47 @@
 matrix:
   include:
-  - name: Python 3.6
+  - name: "Python 3.6 on Linux"
     python: 3.6
     os: linux
-  - name: Python 3.7
+  - name: "Python 3.7 on Linux"
     python: 3.7
     os: linux
-  - name: Python 3.8
-    python: 3.8
+  - name: "Python 3.8 on Linux"
     os: linux
   # Cannot natively install python in Mac OS, but comes bundled with xcode so
   # using a specific xcode version can satisfy python version requirements, see:
   # https://docs.travis-ci.com/user/languages/python/
-  - name: Python 3.6
+  - name: "Python 3.6 on Mac OS X 10.13"
     os: osx
     language: shell
     osx_image: "xcode9.4"  # High Sierra 10.13
     env:
-      PYTHON_VERSION: 3.6.10
-  - name: Python 3.7
+      PYTHON_VERSION: "3.6.10"
+  - name: "Python 3.7 on Mac OS X 10.14"
     os: osx
     language: shell
     osx_image: "xcode10.2"  # Mojave 10.14
     env:
-      PYTHON_VERSION: 3.7.7
-  - name: Python 3.8
+      PYTHON_VERSION: "3.7.7"
+  - name: "Python 3.8 on Mac OS X 10.15"
     os: osx
     language: shell
     osx_image: "xcode11.4"  # Catalina 10.15
     env:
-      PYTHON_VERSION: 3.8.3
+      PYTHON_VERSION: "3.8.3"
 env:
   global:
     LIBGIT2: "~/libgit2/_install/"
     LD_LIBRARY_PATH: "${LIBGIT2}/lib:${LD_LIBRARY_PATH}"
     LIBGIT2_VERSION: "1.0.1"  # TODO Add in support for building against v0.28
 before_install:
-- if [ "$TRAVIS_OS_NAME" = "osx" ]; then pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update && brew upgrade pyenv; fi
+- pyenv install --list
+- pyenv versions
+- pyenv install $PYTHON_VERSION && pyenv global $PYTHON_VERSION
 - python3 --version
 - which python3
 - which pip3
-- pyenv versions
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install cmake; fi
 - ./.travis.sh "${LIBGIT2_VERSION}"
 install:
