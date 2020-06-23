@@ -14,12 +14,15 @@ matrix:
   # https://docs.travis-ci.com/user/languages/python/
   - name: Python 3.6
     os: osx
+    language: shell
     osx_image: "xcode9.4"  # Comes with v3.6.5
   - name: Python 3.7
     os: osx
+    language: shell
     osx_image: "xcode10.2"  # Comes with v3.7.3
   - name: Python 3.8
     os: osx
+    language: shell
     osx_image: "xcode11.5"  # Comes with v???
 env:
   global:
