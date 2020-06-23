@@ -2,31 +2,31 @@ matrix:
   include:
   - name: "Python 3.6 on Linux"
     os: linux
+    env: &py36
+      PYTHON_VERSION: "3.6.10"
   - name: "Python 3.7 on Linux"
     os: linux
+    env: &py37
+      PYTHON_VERSION: "3.7.7"
   - name: "Python 3.8 on Linux"
     os: linux
+    env: &py38
+      PYTHON_VERSION: "3.8.3"
   # Cannot natively install python in Mac OS, but comes bundled with xcode so
   # using a specific xcode version can satisfy python version requirements, see:
   # https://docs.travis-ci.com/user/languages/python/
   - name: "Python 3.6 on Mac OS X 10.13"
     os: osx
-    language: shell
     osx_image: "xcode9.4"  # High Sierra 10.13
-    env:
-      PYTHON_VERSION: "3.6.10"
+    <<: *py36
   - name: "Python 3.7 on Mac OS X 10.14"
     os: osx
-    language: shell
     osx_image: "xcode10.2"  # Mojave 10.14
-    env:
-      PYTHON_VERSION: "3.7.7"
+    <<: *py37
   - name: "Python 3.8 on Mac OS X 10.15"
     os: osx
-    language: shell
     osx_image: "xcode11.4"  # Catalina 10.15
-    env:
-      PYTHON_VERSION: "3.8.3"
+    <<: *py38
 env:
   global:
     LIBGIT2: "~/libgit2/_install/"
