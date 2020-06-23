@@ -27,7 +27,7 @@ env:
     LD_LIBRARY_PATH: "${LIBGIT2}/lib:${LD_LIBRARY_PATH}"
     LIBGIT2_VERSION: "1.0.1"  # TODO Add in support for building against v0.28
 before_install:
-- python --version
+- python3 --version
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install cmake; fi
 - ./.travis.sh "${LIBGIT2_VERSION}"
 install:
