@@ -44,7 +44,7 @@ def test_install(Battenberg: Mock, obj: Dict):
     assert result.exit_code == 0
     assert result.output == ''
     Battenberg.return_value.install.assert_called_once_with(
-        template, checkout='main', no_input=False
+        template, checkout=None, initial_head=None, no_input=False
     )
 
 
@@ -55,7 +55,7 @@ def test_upgrade(Battenberg: Mock, obj: Dict):
     assert result.exit_code == 0
     assert result.output == ''
     Battenberg.return_value.upgrade.assert_called_once_with(
-        checkout='main',
+        checkout=None,
         context_file='.cookiecutter.json',
         merge_target=None,
         no_input=False

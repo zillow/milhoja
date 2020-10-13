@@ -2,7 +2,7 @@
 
 ## 0.4.0 (2020-10-13)
 
-- Switch `git` target branch terminology from `master` -> `main` to promote equity and belonging.
+- Remove `master` as the default `git` target branch terminology to promote equity and belonging. Instead rely on remote HEAD to infer default branch naming convention.
 
 ## 0.3.0 (2020-05-29)
 

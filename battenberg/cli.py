@@ -58,32 +58,37 @@ def main(ctx, o: str, verbose: bool):
 @click.option(
     '--initial-head',
     help='The initial branch name to use when creating a new repo',
-    default='main'
+    default=None
 )
 @click.option(
     '--checkout',
-    help='branch, tag or commit to checkout in the remote target',
-    default='main'
+    help='branch, tag or commit to checkout from the remote template',
+    default=None
 )
 @click.option(
     '--no-input', is_flag=True,
     help='Do not prompt for parameters and only use cookiecutter.json file content',
 )
 @click.pass_context
-def install(ctx, template: str, initial_head: str, **kwargs):
-    battenberg = Battenberg(open_or_init_repository(ctx.obj['target']), initial_head=initial_head)
+def install(ctx, template: str, **kwargs):
+    """Create a new copy from the TEMPLATE repository.
+
+    TEMPLATE is expected to be the URL of a git repository.
+    """
+
+    battenberg = Battenberg(open_or_init_repository(ctx.obj['target']))
     battenberg.install(template, **kwargs)
 
 
 @main.command()
 @click.option(
     '--checkout',
-    help='branch, tag or commit to checkout',
-    default='main'
+    help='branch, tag or commit to checkout from the remote template',
+    default=None
 )
 @click.option(
     '--merge-target',
-    help='A branch that the upgrade should be merged into.',
+    help='A branch that the upgrade should be merged into',
     default=None
 )
 @click.option(
@@ -99,6 +104,8 @@ def install(ctx, template: str, initial_head: str, **kwargs):
 )
 @click.pass_context
 def upgrade(ctx, **kwargs):
+    """Upgrade a existing copy of a template."""
+
     try:
         battenberg = Battenberg(open_repository(ctx.obj['target']))
         battenberg.upgrade(**kwargs)

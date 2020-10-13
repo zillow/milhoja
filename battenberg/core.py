@@ -3,7 +3,7 @@ import json
 import logging
 import shutil
 import tempfile
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from pygit2 import (
     RemoteCallbacks,
@@ -48,15 +48,12 @@ class Battenberg:
                                           callbacks=RemoteCallbacks(credentials=keypair))
         self.repo.references.create(
             f'refs/heads/{TEMPLATE_BRANCH}',
-            self.repo.references.get(
-                f'refs/remotes/origin/{TEMPLATE_BRANCH}').target
+            self.repo.references.get(f'refs/remotes/origin/{TEMPLATE_BRANCH}').target
         )
 
-    def _cookiecut(self, cookiecutter_kwargs: dict,
-                   worktree: TemporaryWorktree):
+    def _cookiecut(self, cookiecutter_kwargs: dict, worktree: TemporaryWorktree):
         with tempfile.TemporaryDirectory() as tmpdir:
-            logger.debug(
-                f"Cookiecutting {cookiecutter_kwargs['template']} into {tmpdir}")
+            logger.debug(f"Cookiecutting {cookiecutter_kwargs['template']} into {tmpdir}")
             cookiecutter(
                 replay=False,
                 overwrite_if_exists=True,
@@ -64,15 +61,13 @@ class Battenberg:
                 **cookiecutter_kwargs
             )
 
-            # Cookiecutter guarantees a single top-level directory after
-            # templating.
+            # Cookiecutter guarantees a single top-level directory after templating.
             logger.debug('Shifting directories down a level')
             top_level_dir = os.path.join(tmpdir, os.listdir(tmpdir)[0])
             for f in os.listdir(top_level_dir):
                 shutil.move(os.path.join(top_level_dir, f), worktree.path)
 
-    def _get_context(self, context_file: str,
-                     base_path: str = None) -> Dict[str, Any]:
+    def _get_context(self, context_file: str, base_path: str = None) -> Dict[str, Any]:
         with open(os.path.join(base_path or self.repo.workdir, context_file)) as f:
             return json.load(f)
 
@@ -142,8 +137,8 @@ class Battenberg:
             raise BattenbergException(
                 f'Unknown merge analysis result: {analysis}')
 
-    def install(self, template: str, checkout: str = 'main',
-                no_input: bool = False):
+    def install(self, template: str, initial_head: Optional[str] = None,
+                checkout: Optional[str] = None, no_input: bool = False):
         """Creates a fresh template install within the supplied repo.
 
         Generates a template using the provided context, or invokes the questionnaire to elicit it.
@@ -151,6 +146,8 @@ class Battenberg:
         Args:
             template: The path (either local or git) to the template project. It must follow
                 the cookiecutter format to be compatible with battenberg.
+            initial_head: The default branch name to use when repository is cloned, defaults to
+                remote ref found in template if available.
             checkout: The new state to pull from the template, normally this will be a git tag on
                 the template repo.
             no_input: Whether to ask the user to answer the template questions again or take the
@@ -205,8 +202,8 @@ class Battenberg:
         logger.debug('Merging changes into HEAD.')
         self._merge_template_branch(f'Installed template \'{template}\'')
 
-    def upgrade(self, checkout: str = 'main', no_input: bool = True, merge_target: str = None,
-                context_file: str = '.cookiecutter.json'):
+    def upgrade(self, checkout: Optional[str] = None, no_input: bool = True,
+                merge_target: Optional[str] = None, context_file: str = '.cookiecutter.json'):
         """Updates a repo using the found template context.
 
         Generates and applies any updates from the current repo state to the template state defined
