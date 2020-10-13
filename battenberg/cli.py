@@ -56,8 +56,13 @@ def main(ctx, o: str, verbose: bool):
 @main.command()
 @click.argument('template')
 @click.option(
+    '--initial-head',
+    help='The initial branch name to use when creating a new repo',
+    default='main'
+)
+@click.option(
     '--checkout',
-    help='branch, tag or commit to checkout',
+    help='branch, tag or commit to checkout in the remote target',
     default='main'
 )
 @click.option(
@@ -65,8 +70,8 @@ def main(ctx, o: str, verbose: bool):
     help='Do not prompt for parameters and only use cookiecutter.json file content',
 )
 @click.pass_context
-def install(ctx, template: str, **kwargs):
-    battenberg = Battenberg(open_or_init_repository(ctx.obj['target']))
+def install(ctx, template: str, initial_head: str, **kwargs):
+    battenberg = Battenberg(open_or_init_repository(ctx.obj['target']), initial_head=initial_head)
     battenberg.install(template, **kwargs)
 
 

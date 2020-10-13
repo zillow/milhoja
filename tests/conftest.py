@@ -63,7 +63,7 @@ def copy_template(repo: Repository, name : str, commit_message: str, parents: Li
 @pytest.fixture
 def template_repo() -> Repository:
     repo_path = tempfile.mkdtemp()
-    repo = init_repository(repo_path)
+    repo = init_repository(repo_path, initial_head='main')
 
     # Copy template contents into a temporary repo for each test.
     main_commit_id = copy_template(repo, 'template', 'Prepared template installation')
