@@ -1,5 +1,9 @@
 # Release History
 
+## 0.4.0 (2020-10-13)
+
+- Switch `git` target branch terminology from `master` -> `main` to promote equity and belonging.
+
 ## 0.3.0 (2020-05-29)
 
 - Update `pygit2` dependency to `>= 1.0`, can now rely on `libgit2 >= 1.0` too. (See [#18](https://github.com/zillow/battenberg/pull/18))

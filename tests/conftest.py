@@ -66,16 +66,16 @@ def template_repo() -> Repository:
     repo = init_repository(repo_path)
 
     # Copy template contents into a temporary repo for each test.
-    master_commit_id = copy_template(repo, 'template', 'Prepared template installation')
-    repo.branches.local.create('master', repo[master_commit_id])
-    repo.checkout('refs/heads/master')
+    main_commit_id = copy_template(repo, 'template', 'Prepared template installation')
+    repo.branches.local.create('main', repo[main_commit_id])
+    repo.checkout('refs/heads/main')
 
     # Construct a new "upgrade" branch which battenberg can target during upgrade.
     upgrade_commit_id = copy_template(
         repo,
         'upgrade-template',
         'Prepared upgrade-template installation',
-        parents=[master_commit_id]
+        parents=[main_commit_id]
     )
     repo.branches.local.create('upgrade', repo[upgrade_commit_id])
 

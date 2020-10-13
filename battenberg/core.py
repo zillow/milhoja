@@ -121,7 +121,7 @@ class Battenberg:
             # Stage all the changes for commit.
             tree = self.repo.index.write_tree()
 
-            # Add the commit back to the HEAD (normally the master branch unless --merge-target
+            # Add the commit back to the HEAD (normally the main branch unless --merge-target
             # is passed).
             self.repo.create_commit(
                 'HEAD',
@@ -142,7 +142,7 @@ class Battenberg:
             raise BattenbergException(
                 f'Unknown merge analysis result: {analysis}')
 
-    def install(self, template: str, checkout: str = 'master',
+    def install(self, template: str, checkout: str = 'main',
                 no_input: bool = False):
         """Creates a fresh template install within the supplied repo.
 
@@ -205,7 +205,7 @@ class Battenberg:
         logger.debug('Merging changes into HEAD.')
         self._merge_template_branch(f'Installed template \'{template}\'')
 
-    def upgrade(self, checkout: str = 'master', no_input: bool = True, merge_target: str = None,
+    def upgrade(self, checkout: str = 'main', no_input: bool = True, merge_target: str = None,
                 context_file: str = '.cookiecutter.json'):
         """Updates a repo using the found template context.
 

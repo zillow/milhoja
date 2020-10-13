@@ -58,7 +58,7 @@ def main(ctx, o: str, verbose: bool):
 @click.option(
     '--checkout',
     help='branch, tag or commit to checkout',
-    default='master'
+    default='main'
 )
 @click.option(
     '--no-input', is_flag=True,
@@ -74,7 +74,7 @@ def install(ctx, template: str, **kwargs):
 @click.option(
     '--checkout',
     help='branch, tag or commit to checkout',
-    default='master'
+    default='main'
 )
 @click.option(
     '--merge-target',
