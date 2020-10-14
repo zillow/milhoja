@@ -59,7 +59,7 @@ def main(ctx, o: str, verbose: bool):
 @click.option(
     '--initial-branch',
     help='The initial branch name to use when creating a new repo',
-    default='main'
+    default=None
 )
 @click.option(
     '--checkout',

@@ -51,7 +51,6 @@ def get_credentials(template: str) -> Union[Keypair, UserPass]:
 def set_initial_branch(repo: Repository, template: str) -> Repository:
     remote_name = 'template'
     try:
-        import pdb; pdb.set_trace()
         credentials = get_credentials(template)
     except ValueError as e:
         logger.debug(e)
