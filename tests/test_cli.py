@@ -44,7 +44,7 @@ def test_install(Battenberg: Mock, obj: Dict):
     assert result.exit_code == 0
     assert result.output == ''
     Battenberg.return_value.install.assert_called_once_with(
-        template, checkout=None, initial_head=None, no_input=False
+        template, checkout=None, no_input=False
     )
 
 

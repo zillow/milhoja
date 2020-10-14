@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import subprocess
+from typing import Optional
 import click
 
 from battenberg.core import Battenberg
@@ -58,7 +59,7 @@ def main(ctx, o: str, verbose: bool):
 @click.option(
     '--initial-head',
     help='The initial branch name to use when creating a new repo',
-    default=None
+    default='main'
 )
 @click.option(
     '--checkout',
@@ -70,13 +71,13 @@ def main(ctx, o: str, verbose: bool):
     help='Do not prompt for parameters and only use cookiecutter.json file content',
 )
 @click.pass_context
-def install(ctx, template: str, **kwargs):
+def install(ctx, template: str, initial_head: Optional[str], **kwargs):
     """Create a new copy from the TEMPLATE repository.
 
     TEMPLATE is expected to be the URL of a git repository.
     """
 
-    battenberg = Battenberg(open_or_init_repository(ctx.obj['target']))
+    battenberg = Battenberg(open_or_init_repository(ctx.obj['target'], initial_head))
     battenberg.install(template, **kwargs)
 
 

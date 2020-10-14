@@ -144,8 +144,6 @@ class Battenberg:
         Args:
             template: The path (either local or git) to the template project. It must follow
                 the cookiecutter format to be compatible with battenberg.
-            initial_head: The default branch name to use when repository is cloned, defaults to
-                remote ref found in template if available.
             checkout: The new state to pull from the template, normally this will be a git tag on
                 the template repo.
             no_input: Whether to ask the user to answer the template questions again or take the
