@@ -1,13 +1,19 @@
 import os
+import logging
+import re
+import subprocess
 from typing import Optional
-from pygit2 import Repository, discover_repository, init_repository, Keypair
+from pygit2 import discover_repository, init_repository, Keypair, Repository
+
+
+logger = logging.getLogger(__name__)
 
 
 def open_repository(path: str) -> Repository:
     return Repository(discover_repository(path))
 
 
-def open_or_init_repository(path: str, initial_branch: Optional[str] = None):
+def open_or_init_repository(path: str, template: str, initial_branch: Optional[str] = None):
     try:
         return open_repository(path)
     except Exception:
@@ -15,6 +21,11 @@ def open_or_init_repository(path: str, initial_branch: Optional[str] = None):
         pass
 
     repo = init_repository(path, initial_head=initial_branch)
+
+    # Mirror the default HEAD of the template repo if client hasn't explicitly provided it.
+    if not initial_branch:
+        repo = set_initial_branch(repo, template)
+
     repo.create_commit(
         'HEAD',
         repo.default_signature,
@@ -23,6 +34,22 @@ def open_or_init_repository(path: str, initial_branch: Optional[str] = None):
         repo.index.write_tree(),
         []
     )
+    return repo
+
+
+def set_initial_branch(repo: Repository, template: str) -> Repository:
+    completed_process = subprocess.run(
+        ['git', 'ls-remote', '--symref', template, 'HEAD'],
+        stdout=subprocess.PIPE, encoding='utf-8')
+    found_refs = completed_process.stdout.split('\n')
+
+    if found_refs:
+        match = re.match(r"^ref: (?P<initial_branch>(\w+)/(\w+)/(\w+))\s*HEAD", found_refs[0])
+        if match:
+            initial_branch = match.group('initial_branch')
+            logger.debug(f'Found remote default branch: {initial_branch}')
+            repo.references['HEAD'].set_target(initial_branch)
+
     return repo
 
 

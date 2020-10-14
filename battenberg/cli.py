@@ -59,7 +59,7 @@ def main(ctx, o: str, verbose: bool):
 @click.option(
     '--initial-branch',
     help='The initial branch name to use when creating a new repo',
-    default='main'
+    default=None
 )
 @click.option(
     '--checkout',
@@ -77,7 +77,7 @@ def install(ctx, template: str, initial_branch: Optional[str], **kwargs):
     TEMPLATE is expected to be the URL of a git repository.
     """
 
-    battenberg = Battenberg(open_or_init_repository(ctx.obj['target'], initial_branch))
+    battenberg = Battenberg(open_or_init_repository(ctx.obj['target'], template, initial_branch))
     battenberg.install(template, **kwargs)
 
 
