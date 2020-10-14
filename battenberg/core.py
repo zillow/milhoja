@@ -100,8 +100,7 @@ class Battenberg:
             #
             #     "git merge --allow-unrelated-histories template"
             #
-            logger.debug(
-                'Forcing merge of template branch into target branch.')
+            logger.debug('Forcing merge of template branch into target branch.')
             self.repo.merge(branch.target)
 
             # If there is a conflict we should error and let the user manually
@@ -137,8 +136,7 @@ class Battenberg:
             raise BattenbergException(
                 f'Unknown merge analysis result: {analysis}')
 
-    def install(self, template: str, initial_head: Optional[str] = None,
-                checkout: Optional[str] = None, no_input: bool = False):
+    def install(self, template: str, checkout: Optional[str] = None, no_input: bool = False):
         """Creates a fresh template install within the supplied repo.
 
         Generates a template using the provided context, or invokes the questionnaire to elicit it.

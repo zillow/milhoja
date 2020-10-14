@@ -18,6 +18,9 @@ pip install battenberg
 If you're on Mac OS X or Windows please follow the [installation guides](https://www.pygit2.org/install.html#) in the `pygit2` documentation
 as well as `battenberg` relies on `libgit2` which needs to be installed first. **Please install `libgit2 >= 1.0`.**
 
+If you use SSH to connect to `git`, please also install OpenSSL **prior to installing `libgit2`!!** Most like you can do this via `brew install openssl`
+if you are on Mac OS X.
+
 ## Prerequistes
 
 It is assumed that your cookiecutter template contains a `.cookiecutter.json` file at the root directory, or you can override its location by
@@ -34,22 +37,24 @@ conflicts needed to be manually resolved for each upgrade merge. To minimize the
 Install a [Cookiecutter](https://github.com/audreyr/cookiecutter) template:
 
 ```bash
-battenberg [-O <root path>] [--verbose] install [--checkout v1.0.0] <cookiecutter template path/URL>
+battenberg [-O <root path>] [--verbose] install [--checkout v1.0.0] [--initial-head master] <cookiecutter template path/URL>
 ```
 
-* `--checkout` - Specifies a target reference (branch, tag or commit) from the cookiecutter template repo.
+* `--checkout` - Specifies a target reference (branch, tag or commit) from the cookiecutter template repo, if not specified is it inferred from the default branch for the template repo.
 * `-O` - Specifies an output folder path, defaults to the current directory.
+* `--initial-head` - The default branch for the newly created `git` repo, if not specified is it inferred from the default branch for the template repo.
 * `--verbose` - Enables extra debug logging.
 
 Upgrade your repository with last version of a template:
 
 ```bash
-battenberg upgrade [--no-input] [--context-file <context filename>] [--merge-target <branch, tag or commit>]
+battenberg upgrade [--checkout v1.0.0] [--no-input] [--merge-target <branch, tag or commit>] [--context-file <context filename>]
 ```
 
-* `--context-file` - Specifies where to read in the template context from, defaults to `.cookiecutter.json`.
+* `--checkout` - Specifies a target reference (branch, tag or commit) from the cookiecutter template repo, if not specified is it inferred from the default branch for the template repo.
 * `--no-input` - Read in the template context from `--context-file` instead of asking the `cookiecutter` template questions again.
 * `--merge-target` - Specify where to merge the eventual template updates.
+* `--context-file` - Specifies where to read in the template context from, defaults to `.cookiecutter.json`.
 
     *Note: `--merge-target` is useful to set if you are a template owner but each cookiecut repo is owned independently. The value you pass*
     *to `--merge-target` should be the source branch for a PR that'd target `main` in the cookiecut repo so they can approve any changes.*
