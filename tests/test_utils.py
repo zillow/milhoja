@@ -25,7 +25,8 @@ def test_open_repository(Repository, discover_repository):
 
 def test_open_or_init_repository_opens_repo(Repository, discover_repository):
     path = 'test-path'
-    assert open_or_init_repository(path) == Repository.return_value
+    template = 'test-template'
+    assert open_or_init_repository(path, template) == Repository.return_value
     Repository.assert_called_once_with(discover_repository.return_value)
     discover_repository.assert_called_once_with(path)
 
@@ -35,9 +36,10 @@ def test_open_or_init_repository_initializes_repo(init_repository, Repository, d
     discover_repository.side_effect = Exception('No repo found')
 
     path = 'test-path'
+    template = 'test-template'
     initial_branch = 'test-initial_branch'
     repo = init_repository.return_value
-    assert open_or_init_repository(path, initial_branch) == repo
+    assert open_or_init_repository(path, template, initial_branch) == repo
     init_repository.assert_called_once_with(path, initial_head=initial_branch)
     init_repository.return_value.create_commit.assert_called_once_with(
         'HEAD',

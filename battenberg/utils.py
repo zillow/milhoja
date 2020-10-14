@@ -1,11 +1,9 @@
 import os
 import logging
 import re
-import getpass
 import subprocess
-from typing import Optional, Union
-from pygit2 import (discover_repository, init_repository, Keypair, RemoteCallbacks, Repository,
-                    UserPass)
+from typing import Optional
+from pygit2 import discover_repository, init_repository, Keypair, Repository
 
 
 logger = logging.getLogger(__name__)
@@ -39,24 +37,13 @@ def open_or_init_repository(path: str, template: str, initial_branch: Optional[s
     return repo
 
 
-def get_credentials(template: str) -> Union[Keypair, UserPass]:
-    if 'https' in template:
-        username = getpass.getuser()
-        password = getpass.getpass()
-        return UserPass(username, password)
-    elif 'git@' in template:
-        return construct_keypair()
-    else:
-        raise ValueError(f'Unsupported template URL type: {template}')
-
-
 def set_initial_branch(repo: Repository, template: str) -> Repository:
     completed_process = subprocess.run(
         ['git', 'ls-remote', '--symref', template, 'HEAD'],
         stdout=subprocess.PIPE, encoding='utf-8')
     found_refs = completed_process.stdout.split('\n')
     if found_refs:
-        match = re.match("^ref: (?P<initial_branch>(\w+)/(\w+)/(\w+))\s*HEAD", found_refs[0])
+        match = re.match(r"^ref: (?P<initial_branch>(\w+)/(\w+)/(\w+))\s*HEAD", found_refs[0])
         if match:
             initial_branch = match.group('initial_branch')
             logger.debug(f'Found remote default branch: {initial_branch}')
