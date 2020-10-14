@@ -77,7 +77,7 @@ def install(ctx, template: str, initial_branch: Optional[str], **kwargs):
     TEMPLATE is expected to be the URL of a git repository.
     """
 
-    battenberg = Battenberg(open_or_init_repository(ctx.obj['target'], template, initial_head))
+    battenberg = Battenberg(open_or_init_repository(ctx.obj['target'], template, initial_branch))
     battenberg.install(template, **kwargs)
 
 

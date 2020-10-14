@@ -1,6 +1,8 @@
 import os
 import logging
+import re
 import getpass
+import subprocess
 from typing import Optional, Union
 from pygit2 import (discover_repository, init_repository, Keypair, RemoteCallbacks, Repository,
                     UserPass)
@@ -49,27 +51,16 @@ def get_credentials(template: str) -> Union[Keypair, UserPass]:
 
 
 def set_initial_branch(repo: Repository, template: str) -> Repository:
-    remote_name = 'template'
-    try:
-        credentials = get_credentials(template)
-    except ValueError as e:
-        logger.debug(e)
-        return repo
-
-    repo.remotes.create(remote_name, template)
-    remotes = repo.remotes[remote_name].ls_remotes(
-        callbacks=RemoteCallbacks(credentials=credentials))
-    for remote in remotes:
-        if remote['name'] == 'HEAD':
-            # We found the remote HEAD, now set the found symbolic_ref (ie. the default branch
-            # name), as the default branch for the newly created repo.
-            default_branch_name = remote['symref_target'].split()[-1]
-
-            # TODO AIPO-999 Actually take the symref_target and create a new HEAD branch and
-            # rearrange references.
-            print('symref_target: ', remote['symref_target'], default_branch_name)
-            break
-    repo.remotes.delete(remote_name)
+    completed_process = subprocess.run(
+        ['git', 'ls-remote', '--symref', template, 'HEAD'],
+        stdout=subprocess.PIPE, encoding='utf-8')
+    found_refs = completed_process.stdout.split('\n')
+    if found_refs:
+        match = re.match("^ref: (?P<initial_branch>(\w+)/(\w+)/(\w+))\s*HEAD", found_refs[0])
+        if match:
+            initial_branch = match.group('initial_branch')
+            logger.debug(f'Found remote default branch: {initial_branch}')
+            repo.references['HEAD'].set_target(initial_branch)
 
     return repo
 
