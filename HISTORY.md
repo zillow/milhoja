@@ -3,6 +3,7 @@
 ## 0.4.0 (2020-10-13)
 
 - Remove `master` as the default `git` target branch terminology to promote equity and belonging. Instead rely on remote HEAD to infer default branch naming convention.
+- Add in `--initial-branch` optional argument to `battenberg install` to specify the initial branch to create when initializing a new project.
 
 ## 0.3.0 (2020-05-29)
 
