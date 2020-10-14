@@ -42,6 +42,7 @@ def set_initial_branch(repo: Repository, template: str) -> Repository:
         ['git', 'ls-remote', '--symref', template, 'HEAD'],
         stdout=subprocess.PIPE, encoding='utf-8')
     found_refs = completed_process.stdout.split('\n')
+
     if found_refs:
         match = re.match(r"^ref: (?P<initial_branch>(\w+)/(\w+)/(\w+))\s*HEAD", found_refs[0])
         if match:
