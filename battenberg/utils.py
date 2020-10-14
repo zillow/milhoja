@@ -24,7 +24,7 @@ def open_or_init_repository(path: str, template: str, initial_branch: Optional[s
 
     # Mirror the default HEAD of the template repo if client hasn't explicitly provided it.
     if not initial_branch:
-        repo = set_initial_branch(repo, template)
+        set_initial_branch(repo, template)
 
     repo.create_commit(
         'HEAD',
@@ -37,7 +37,7 @@ def open_or_init_repository(path: str, template: str, initial_branch: Optional[s
     return repo
 
 
-def set_initial_branch(repo: Repository, template: str) -> Repository:
+def set_initial_branch(repo: Repository, template: str):
     completed_process = subprocess.run(
         ['git', 'ls-remote', '--symref', template, 'HEAD'],
         stdout=subprocess.PIPE, encoding='utf-8')
@@ -49,8 +49,6 @@ def set_initial_branch(repo: Repository, template: str) -> Repository:
             initial_branch = match.group('initial_branch')
             logger.debug(f'Found remote default branch: {initial_branch}')
             repo.references['HEAD'].set_target(initial_branch)
-
-    return repo
 
 
 def construct_keypair(public_key_path: str = None, private_key_path: str = None,

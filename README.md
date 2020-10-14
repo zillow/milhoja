@@ -37,7 +37,7 @@ conflicts needed to be manually resolved for each upgrade merge. To minimize the
 Install a [Cookiecutter](https://github.com/audreyr/cookiecutter) template:
 
 ```bash
-battenberg [-O <root path>] [--verbose] install [--checkout v1.0.0] [--initial-branch master] <cookiecutter template path/URL>
+battenberg [-O <root path>] [--verbose] install [--checkout v1.0.0] [--initial-branch main] <cookiecutter template path/URL>
 ```
 
 * `--checkout` - Specifies a target reference (branch, tag or commit) from the cookiecutter template repo, if not specified is it inferred from the default branch for the template repo.
