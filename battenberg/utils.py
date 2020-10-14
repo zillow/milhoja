@@ -7,14 +7,14 @@ def open_repository(path: str) -> Repository:
     return Repository(discover_repository(path))
 
 
-def open_or_init_repository(path: str, initial_head: Optional[str] = None):
+def open_or_init_repository(path: str, initial_branch: Optional[str] = None):
     try:
         return open_repository(path)
     except Exception:
         # Not found any repo, let's make one.
         pass
 
-    repo = init_repository(path, initial_head=initial_head)
+    repo = init_repository(path, initial_head=initial_branch)
     repo.create_commit(
         'HEAD',
         repo.default_signature,

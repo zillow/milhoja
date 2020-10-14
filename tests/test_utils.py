@@ -35,10 +35,10 @@ def test_open_or_init_repository_initializes_repo(init_repository, Repository, d
     discover_repository.side_effect = Exception('No repo found')
 
     path = 'test-path'
-    initial_head = 'test-initial_head'
+    initial_branch = 'test-initial_branch'
     repo = init_repository.return_value
-    assert open_or_init_repository(path, initial_head) == repo
-    init_repository.assert_called_once_with(path, initial_head=initial_head)
+    assert open_or_init_repository(path, initial_branch) == repo
+    init_repository.assert_called_once_with(path, initial_head=initial_branch)
     init_repository.return_value.create_commit.assert_called_once_with(
         'HEAD',
         repo.default_signature,

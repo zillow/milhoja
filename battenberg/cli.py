@@ -57,7 +57,7 @@ def main(ctx, o: str, verbose: bool):
 @main.command()
 @click.argument('template')
 @click.option(
-    '--initial-head',
+    '--initial-branch',
     help='The initial branch name to use when creating a new repo',
     default='main'
 )
@@ -71,13 +71,13 @@ def main(ctx, o: str, verbose: bool):
     help='Do not prompt for parameters and only use cookiecutter.json file content',
 )
 @click.pass_context
-def install(ctx, template: str, initial_head: Optional[str], **kwargs):
+def install(ctx, template: str, initial_branch: Optional[str], **kwargs):
     """Create a new copy from the TEMPLATE repository.
 
     TEMPLATE is expected to be the URL of a git repository.
     """
 
-    battenberg = Battenberg(open_or_init_repository(ctx.obj['target'], initial_head))
+    battenberg = Battenberg(open_or_init_repository(ctx.obj['target'], initial_branch))
     battenberg.install(template, **kwargs)
 
 
