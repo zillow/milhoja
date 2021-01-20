@@ -1,5 +1,10 @@
 # Release History
 
+## 0.4.1 (2021-01-XX)
+
+- Suppress stacktrace logging when hook exits unsuccessfully (See [#23](https://github.com/zillow/battenberg/pull/23))
+- Ensure we're compatible with updated `Repository.__init__` constructor (See [#23](https://github.com/zillow/battenberg/pull/23))
+
 ## 0.4.0 (2020-10-13)
 
 - Remove `master` as the default `git` target branch terminology to promote equity and belonging. Instead rely on remote HEAD to infer default branch naming convention.
