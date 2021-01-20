@@ -1,3 +1,4 @@
+import sys
 import os
 import json
 import logging
@@ -13,6 +14,7 @@ from pygit2 import (
     GIT_MERGE_ANALYSIS_NORMAL
 )
 from cookiecutter.main import cookiecutter
+from cookiecutter.exceptions import FailedHookException
 from battenberg.errors import (
     BattenbergException,
     MergeConflictException,
@@ -54,12 +56,17 @@ class Battenberg:
     def _cookiecut(self, cookiecutter_kwargs: dict, worktree: TemporaryWorktree):
         with tempfile.TemporaryDirectory() as tmpdir:
             logger.debug(f"Cookiecutting {cookiecutter_kwargs['template']} into {tmpdir}")
-            cookiecutter(
-                replay=False,
-                overwrite_if_exists=True,
-                output_dir=tmpdir,
-                **cookiecutter_kwargs
-            )
+            try:
+                cookiecutter(
+                    replay=False,
+                    overwrite_if_exists=True,
+                    output_dir=tmpdir,
+                    **cookiecutter_kwargs
+                )
+            except FailedHookException as e:
+                # Suppress stacktrace for known hook error to ensure it is easy for user to diget.
+                logging.error(e)
+                sys.exit(1)
 
             # Cookiecutter guarantees a single top-level directory after templating.
             logger.debug('Shifting directories down a level')
