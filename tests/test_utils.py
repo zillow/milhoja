@@ -1,6 +1,7 @@
 import os
 from unittest.mock import Mock, patch
 import pytest
+from battenberg.errors import InvalidRepositoryException
 from battenberg.utils import open_repository, open_or_init_repository, construct_keypair
 
 
@@ -41,6 +42,14 @@ def test_open_repository(Repository: Mock, discover_repository: Mock):
     assert open_repository(path) == Repository.return_value
     Repository.assert_called_once_with(discover_repository.return_value)
     discover_repository.assert_called_once_with(path)
+
+
+def test_open_repository_raises_on_invalid_path():
+    path = 'test-path'
+    with pytest.raises(InvalidRepositoryException) as e:
+        open_repository(path)
+
+    assert str(e.value) == f'{path} is not a valid repository path.'
 
 
 def test_open_or_init_repository_opens_repo(Repository: Mock, discover_repository: Mock):

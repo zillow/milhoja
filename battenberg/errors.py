@@ -57,3 +57,12 @@ class MergeConflictException(BattenbergException):
     Error raised when we cannot merge the template commit with the target branch.
     """
     pass
+
+
+class InvalidRepositoryException(BattenbergException):
+    """
+    Error raised when Git repository is invalid.
+    """
+
+    def __init__(self, path: str):
+        super().__init__(f'{path} is not a valid repository path.')
