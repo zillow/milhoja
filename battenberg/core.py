@@ -64,6 +64,7 @@ class Battenberg:
                     **cookiecutter_kwargs
                 )
             except FailedHookException as e:
+                raise
                 # Suppress stacktrace for known hook error to ensure it is easy for user to diget.
                 logging.error(e)
                 sys.exit(1)

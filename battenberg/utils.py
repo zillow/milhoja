@@ -13,7 +13,7 @@ def open_repository(path: str) -> Repository:
     repo_path = discover_repository(path)
     if repo_path:
         return Repository(repo_path)
-    
+
     raise ValueError(f'{path} is not a valid repository path.')
 
 
