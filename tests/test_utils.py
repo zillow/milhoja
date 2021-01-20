@@ -28,6 +28,14 @@ def Keypair() -> Mock:
         yield Keypair
 
 
+def test_open_repository():
+    path = 'test-path'
+    with pytest.assertRaises(ValueError) as e:
+        open_repository(path)
+
+    assert str(e.value) == f'{path} is not a valid repository path.'
+
+
 def test_open_repository(Repository: Mock, discover_repository: Mock):
     path = 'test-path'
     assert open_repository(path) == Repository.return_value

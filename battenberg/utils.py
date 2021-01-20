@@ -10,7 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 def open_repository(path: str) -> Repository:
-    return Repository(discover_repository(path))
+    repo_path = discover_repository(path)
+    if repo_path:
+        return Repository(repo_path)
+    
+    raise ValueError(f'{path} is not a valid repository path.')
 
 
 def open_or_init_repository(path: str, template: str, initial_branch: Optional[str] = None):
