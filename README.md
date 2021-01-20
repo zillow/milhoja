@@ -18,7 +18,7 @@ pip install battenberg
 If you're on Mac OS X or Windows please follow the [installation guides](https://www.pygit2.org/install.html#) in the `pygit2` documentation
 as well as `battenberg` relies on `libgit2` which needs to be installed first. **Please install `libgit2 >= 1.0`.**
 
-If you use SSH to connect to `git`, please also install OpenSSL **prior to installing `libgit2`!!** Most like you can do this via `brew install openssl`
+If you use SSH to connect to `git`, please also install `libssh2` **prior to installing `libgit2`!!** Most like you can do this via `brew install libssh2`
 if you are on Mac OS X.
 
 ## Prerequistes
@@ -129,6 +129,37 @@ git push origin <version>
 Then watch Travis CI build for any errors, eventually it should appear on the [`battenberg` PyPI](https://pypi.org/project/battenberg/) project.
 
 ## FAQ
+
+* I got an error like `_pygit2.GitError: unsupported URL protocol`, how do I fix this?
+
+    Likely you're using a `git` URL with `ssh` and have installed `pygit2` without access to the underlying `libssh2`
+    library. To test this run:
+
+    ```bash
+    $ python -c "import pygit2; print(bool(pygit2.features & pygit2.GIT_FEATURE_SSH))"
+    False
+    ```
+
+    To remedy this run:
+
+    ```bash
+    $ pip uninstall pygit2
+    ...
+    # Hopefully you have this, but this will install the compiler toolchain for OS X.
+    $ xcode-select --install
+    ...
+    $ brew install libssh2
+    ...
+    $ brew install libgit2
+    ...
+    # The python wheels for Mac OS X for pygit2 are not built with SSH support by default so tell pip
+    # to install pygit2 from source.
+    $ pip install pygit2 --no-binary pygit2
+    ...
+    # Finally test out to ensure pygit2 picks up the SSH features.
+    $ python -c "import pygit2; print(bool(pygit2.features & pygit2.GIT_FEATURE_SSH))"
+    True
+    ```
 
 * Why are you using a new `.cookiecutter.json` pattern instead of using the [`replay` pattern](https://cookiecutter.readthedocs.io/en/latest/advanced/replay.html)?
 
