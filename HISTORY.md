@@ -1,6 +1,6 @@
 # Release History
 
-## 0.4.1 (2021-01-XX)
+## 0.4.1 (2021-01-25)
 
 - Suppress stacktrace logging when hook exits unsuccessfully (See [#23](https://github.com/zillow/battenberg/pull/23))
 - Ensure we're compatible with updated `Repository.__init__` constructor (See [#23](https://github.com/zillow/battenberg/pull/23))
