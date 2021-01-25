@@ -1,6 +1,7 @@
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 import pytest
 from pygit2 import Reference, Repository
+from cookiecutter.exceptions import FailedHookException
 from battenberg.errors import TemplateConflictException, TemplateNotFoundException
 from battenberg.core import Battenberg
 
@@ -39,6 +40,18 @@ def test_install_raises_template_conflict(repo: Repository, template_repo: Repos
 
     with pytest.raises(TemplateConflictException):
         battenberg.install(template_repo.workdir)
+
+
+@patch('battenberg.core.cookiecutter')
+def test_install_raises_failed_hook(cookiecutter: Mock, repo: Repository, template_repo: Repository):
+    cookiecutter.side_effect = FailedHookException
+
+    battenberg = Battenberg(repo)
+
+    with pytest.raises(SystemExit) as e:
+        battenberg.install(template_repo.workdir)
+
+    assert e.value.code == 1
 
 
 def test_upgrade_raises_template_not_found(repo: Repository):

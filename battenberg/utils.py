@@ -14,6 +14,8 @@ def open_repository(path: str) -> Repository:
     try:
         repo_path = discover_repository(path)
     except Exception as e:
+        # Looks like exceptions raised in the C code from pygit2 are all of type Exception so
+        # we're forced to rely on the message to interpret.
         if 'No repo found' in str(e):
             raise InvalidRepositoryException(path)
         raise
