@@ -66,3 +66,9 @@ class InvalidRepositoryException(BattenbergException):
 
     def __init__(self, path: str):
         super().__init__(f'{path} is not a valid repository path.')
+
+class LocalBranchNotFoundException(BattenbergException):
+    """
+    Error raised when TEMPLATE_BRANCH is not found.
+    """
+    pass

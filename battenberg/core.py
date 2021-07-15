@@ -19,7 +19,8 @@ from battenberg.errors import (
     BattenbergException,
     MergeConflictException,
     TemplateConflictException,
-    TemplateNotFoundException
+    TemplateNotFoundException,
+    LocalBranchNotFoundException
 )
 from battenberg.temporary_worktree import TemporaryWorktree
 from battenberg.utils import construct_keypair
@@ -46,6 +47,8 @@ class Battenberg:
     def _fetch_remote_template(self):
         # First try to pull it from the remote origin/TEMPLATE_BRANCH
         keypair = construct_keypair()
+        if TEMPLATE_BRANCH not in list(self.repo.branches.local):
+            raise LocalBranchNotFoundException(f'{TEMPLATE_BRANCH} branch not found')
         self.repo.remotes['origin'].fetch([TEMPLATE_BRANCH],
                                           callbacks=RemoteCallbacks(credentials=keypair))
         self.repo.references.create(
