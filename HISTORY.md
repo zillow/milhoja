@@ -1,5 +1,9 @@
 # Release History
 
+## 0.5.0 (2022-03-31)
+
+- Update python version to 3.7+
+
 ## 0.4.1 (2021-01-25)
 
 - Suppress stacktrace logging when hook exits unsuccessfully (See [#23](https://github.com/zillow/battenberg/pull/23))
