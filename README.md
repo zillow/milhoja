@@ -1,7 +1,7 @@
 # Battenberg
 
 [![image](https://img.shields.io/pypi/v/battenberg.svg)](https://pypi.python.org/pypi/battenberg)
-[![image](https://img.shields.io/travis/zillow/battenberg.svg)](https://travis-ci.org/zillow/battenberg)
+[![image](https://img.shields.io/travis/zillow/battenberg.svg)](https://github.com/zillow/battenberg/actions)
 
 Battenberg is a tool built atop of [Cookiecutter](https://github.com/audreyr/cookiecutter) to keep Cookiecut projects
 in sync with their parent templates. Under the hood, Battenberg relies on Git to manage the merging, diffing, and
@@ -116,8 +116,7 @@ flake8 --config flake8.cfg battenberg
 
 **Reminder to update [`HISTORY.md`](./HISTORY.md) with a summary of any updates, especially breaking changes.**
 
-We utilize Travis CI's built in [deploy to PyPI](https://docs.travis-ci.com/user/deployment/pypi/) functionality. Specifically
-we've limited it to just publish on `git tags`. To release run:
+We utilize GitHub Actions to deploy to PyPI. We've limited it to just publish on `git tags`. To release run:
 
 ```bash
 # Change to the appropriate commit you want to base the release on.
@@ -126,7 +125,7 @@ git tag <version>
 git push origin <version>
 ```
 
-Then watch Travis CI build for any errors, eventually it should appear on the [`battenberg` PyPI](https://pypi.org/project/battenberg/) project.
+Then watch the build for any errors, eventually it should appear on the [`battenberg` PyPI](https://pypi.org/project/battenberg/) project.
 
 ## FAQ
 
