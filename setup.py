@@ -60,7 +60,7 @@ setup(
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12'
     ],
-    python_requires=">=3.12",
+    python_requires=">=3.9",
     extras_require={
         'dev': ['pytest', 'pytest-cov', 'flake8', 'codecov']
     }
