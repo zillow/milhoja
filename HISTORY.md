@@ -1,5 +1,9 @@
 # Release History
 
+## 0.5.1 (2023-08-08)
+
+- Update python version to 3.9+
+
 ## 0.5.0 (2023-03-31)
 
 - Update python version to 3.7+
