@@ -275,8 +275,8 @@ class Battenberg:
             )
             commit = worktree.repo.get(oid)
 
-        # Make template branch ref to created commit
-        self.repo.lookup_branch(TEMPLATE_BRANCH).set_target(commit.hex)
+        # Make template branch ref to created commit, see https://github.com/libgit2/pygit2/blob/master/CHANGELOG.md#1150-2024-05-18
+        self.repo.lookup_branch(TEMPLATE_BRANCH).set_target(str(commit.id))
 
         # Let's merge our changes into HEAD
         self._merge_template_branch(
