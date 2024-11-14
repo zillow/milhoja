@@ -1,5 +1,9 @@
 # Release History
 
+## 0.5.2 (2024-11-12)
+
+- Update to pygit2 usage to enable usage of newer versions of the package while also maintaining backwards compatibility.
+
 ## 0.5.1 (2023-08-08)
 
 - Update python version to 3.9+
