@@ -1,16 +1,15 @@
-import os
 import logging
 import re
 import subprocess
 from typing import Optional
 from pygit2 import discover_repository, init_repository, Keypair, Repository
-from battenberg.errors import InvalidRepositoryException
-
+from battenberg.errors import InvalidRepositoryException, KeypairException
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 
-def open_repository(path: str) -> Repository:
+def open_repository(path: Path) -> Repository:
     try:
         repo_path = discover_repository(path)
     except Exception as e:
@@ -26,7 +25,7 @@ def open_repository(path: str) -> Repository:
     return Repository(repo_path)
 
 
-def open_or_init_repository(path: str, template: str, initial_branch: Optional[str] = None):
+def open_or_init_repository(path: Path, template: str, initial_branch: Optional[str] = None):
     try:
         return open_repository(path)
     except InvalidRepositoryException:
@@ -64,11 +63,38 @@ def set_initial_branch(repo: Repository, template: str):
             repo.references['HEAD'].set_target(initial_branch)
 
 
-def construct_keypair(public_key_path: str = None, private_key_path: str = None,
+ALGORITHMS = {
+    "ED25519": {
+        "public": "id_ed25519.pub",
+        "private": "id_ed25519"
+    },
+    "ED25519_SK": {
+        "public": "id_ed25519_sk.pub",
+        "private": "id_ed25519_sk"
+    },
+    "ECDSA_SK": {
+        "public": "id_ecdsa_sk.pub",
+        "private": "id_ecdsa_sk"
+    },
+    "RSA": {
+        "public": "id_rsa.pub",
+        "private": "id_rsa"
+    }
+}
+
+
+def construct_keypair(public_key_path: Path = None, private_key_path: Path = None,
                       passphrase: str = '') -> Keypair:
-    ssh_path = os.path.join(os.path.expanduser('~'), '.ssh')
-    if not public_key_path:
-        public_key_path = os.path.join(ssh_path, 'id_rsa.pub')
-    if not private_key_path:
-        private_key_path = os.path.join(ssh_path, 'id_rsa')
+    ssh_path = Path('~/.ssh').expanduser()
+    for algorithm in ALGORITHMS.values():
+        public_key_path = public_key_path or (ssh_path / algorithm['public'])
+        private_key_path = private_key_path or (ssh_path / algorithm['private'])
+        if public_key_path.exists() and private_key_path.exists():
+            break
+        public_key_path = None
+        private_key_path = None
+    else:
+        raise KeypairException(f'Could not find keypair in {ssh_path}',
+                               f'Possible options include: {ALGORITHMS}')
+
     return Keypair("git", public_key_path, private_key_path, passphrase)
