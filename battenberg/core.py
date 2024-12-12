@@ -1,10 +1,9 @@
 import sys
-import os
 import json
 import logging
-import shutil
 import tempfile
 from typing import Any, Dict, Optional
+from pathlib import Path
 
 from pygit2 import (
     RemoteCallbacks,
@@ -55,6 +54,7 @@ class Battenberg:
 
     def _cookiecut(self, cookiecutter_kwargs: dict, worktree: TemporaryWorktree):
         with tempfile.TemporaryDirectory() as tmpdir:
+            tmpdir = Path(tmpdir)
             logger.debug(f"Cookiecutting {cookiecutter_kwargs['template']} into {tmpdir}")
             try:
                 cookiecutter(
@@ -70,12 +70,12 @@ class Battenberg:
 
             # Cookiecutter guarantees a single top-level directory after templating.
             logger.debug('Shifting directories down a level')
-            top_level_dir = os.path.join(tmpdir, os.listdir(tmpdir)[0])
-            for f in os.listdir(top_level_dir):
-                shutil.move(os.path.join(top_level_dir, f), worktree.path)
+            top_level_dir = tmpdir.joinpath(next(tmpdir.iterdir()))
+            for f in top_level_dir.iterdir():
+                f.rename(worktree.path / f.name)
 
-    def _get_context(self, context_file: str, base_path: str = None) -> Dict[str, Any]:
-        with open(os.path.join(base_path or self.repo.workdir, context_file)) as f:
+    def _get_context(self, context_file: Path, base_path: Path = None) -> Dict[str, Any]:
+        with (base_path or Path(self.repo.workdir)).joinpath(context_file).open() as f:
             return json.load(f)
 
     def _merge_template_branch(self, message: str, merge_target: str = None):
@@ -206,7 +206,8 @@ class Battenberg:
         self._merge_template_branch(f'Installed template \'{template}\'')
 
     def upgrade(self, checkout: Optional[str] = None, no_input: bool = True,
-                merge_target: Optional[str] = None, context_file: str = '.cookiecutter.json'):
+                merge_target: Optional[str] = None,
+                context_file: Path = Path('.cookiecutter.json')):
         """Updates a repo using the found template context.
 
         Generates and applies any updates from the current repo state to the template state defined
@@ -275,7 +276,8 @@ class Battenberg:
             )
             commit = worktree.repo.get(oid)
 
-        # Make template branch ref to created commit, see https://github.com/libgit2/pygit2/blob/master/CHANGELOG.md#1150-2024-05-18
+        # Make template branch ref to created commit,
+        # see https://github.com/libgit2/pygit2/blob/master/CHANGELOG.md#1150-2024-05-18
         self.repo.lookup_branch(TEMPLATE_BRANCH).set_target(str(commit.id))
 
         # Let's merge our changes into HEAD

@@ -1,15 +1,14 @@
-import io
 import re
 from setuptools import setup
+from pathlib import Path
 
-
-with open('README.md') as readme_file:
+with Path('README.md').open() as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.md') as history_file:
+with Path('HISTORY.md').open() as history_file:
     history = history_file.read()
 
-with io.open('battenberg/__init__.py', 'rt', encoding='utf8') as f:
+with Path('battenberg/__init__.py').open('rt', encoding='utf8') as f:
     version = re.search(r'__version__ = \'(.*?)\'', f.read()).group(1)
 
 

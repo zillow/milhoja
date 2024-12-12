@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 class BattenbergException(Exception):
     """
     Abstract Battenberg generic exception.
@@ -19,7 +22,7 @@ class WorktreeException(BattenbergException):
     Error raised when worktree could not be initialized.
     """
 
-    def __init__(self, worktree_name: str, worktree_path: str):
+    def __init__(self, worktree_name: str, worktree_path: Path):
         super().__init__(
             f'Worktree \'{worktree_name}\' could not be initialized in path \'{worktree_path}\''
         )
@@ -64,5 +67,12 @@ class InvalidRepositoryException(BattenbergException):
     Error raised when Git repository is invalid.
     """
 
-    def __init__(self, path: str):
+    def __init__(self, path: Path):
         super().__init__(f'{path} is not a valid repository path.')
+
+
+class KeypairException(BattenbergException):
+    """
+    Error raised when keypair could not be created.
+    """
+    pass
