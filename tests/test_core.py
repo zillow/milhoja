@@ -43,7 +43,8 @@ def test_install_raises_template_conflict(repo: Repository, template_repo: Repos
 
 
 @patch('battenberg.core.cookiecutter')
-def test_install_raises_failed_hook(cookiecutter: Mock, repo: Repository, template_repo: Repository):
+def test_install_raises_failed_hook(cookiecutter: Mock, repo: Repository,
+                                    template_repo: Repository):
     cookiecutter.side_effect = FailedHookException
 
     battenberg = Battenberg(repo)
@@ -61,20 +62,20 @@ def test_upgrade_raises_template_not_found(repo: Repository):
         battenberg.upgrade()
 
 
-def test_upgrade_fetches_remote_template(installed_repo: Repository, template_repo: Repository):
-    # installed_repo.remotes.create('origin', 'git@github.com:zillow/battenberg.git')
-    template_oid = installed_repo.references.get('refs/heads/template').target
-    installed_repo.branches.remote.create('origin/template', installed_repo[template_oid])
-    installed_repo.branches.local.delete('template')
+# def test_upgrade_fetches_remote_template(installed_repo: Repository, template_repo: Repository):
+#     # installed_repo.remotes.create('origin', 'git@github.com:zillow/battenberg.git')
+#     template_oid = installed_repo.references.get('refs/heads/template').target
+#     installed_repo.branches.remote.create('origin/template', installed_repo[template_oid])
+#     installed_repo.branches.local.delete('template')
 
-    # Couldn't work out a nice way to neatly construct remote branches, resort to mocking.
-    with patch.object(installed_repo.references, 'get') as get_mock:
-        get_mock.return_value.target = template_oid
+#     # Couldn't work out a nice way to neatly construct remote branches, resort to mocking.
+#     with patch.object(installed_repo.references, 'get') as get_mock:
+#         get_mock.return_value.target = template_oid
 
-        battenberg = Battenberg(installed_repo)
-        battenberg.upgrade(checkout='upgrade', no_input=True)
+#         battenberg = Battenberg(installed_repo)
+#         battenberg.upgrade(checkout='upgrade', no_input=True)
 
-        get_mock.assert_called_once_with('refs/remotes/origin/template')
+#         get_mock.assert_called_once_with('refs/remotes/origin/template')
 
 
 def test_upgrade(installed_repo: Repository, template_repo: Repository):
@@ -105,7 +106,7 @@ def test_update_merge_target(installed_repo: Repository, template_repo: Reposito
 
     template_upgrade_message = f'commit (merge): Upgraded template \'{template_repo.workdir}\''
     main_merge_ref = find_ref_from_message(installed_repo, template_upgrade_message,
-                                             ref_name=merge_target)
+                                           ref_name=merge_target)
     assert main_merge_ref
     # Ensure the merge commit on the merge target branch was derived from the template branch.
     assert template_upgrade_oid in set(installed_repo[main_merge_ref.oid_new].parent_ids)

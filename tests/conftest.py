@@ -1,6 +1,4 @@
-import os
-import stat
-from distutils.dir_util import copy_tree, remove_tree
+import shutil
 import tarfile
 import tempfile
 from types import TracebackType
@@ -8,6 +6,7 @@ from typing import List, Optional, Type
 import pytest
 from pygit2 import Repository, init_repository
 from battenberg.core import Battenberg
+from pathlib import Path
 
 
 class TemporaryRepository:
@@ -19,9 +18,9 @@ class TemporaryRepository:
 
     def __enter__(self) -> 'TemporaryRepository':
         name = 'testrepo'
-        repo_path = os.path.join(os.path.dirname(__file__), 'data', f'{name}.tar')
-        self.temp_dir = tempfile.mkdtemp()
-        temp_repo_path = os.path.join(self.temp_dir, name)
+        repo_path = Path(__file__).parent / 'data' / f'{name}.tar'
+        self.temp_dir = Path(tempfile.mkdtemp())
+        temp_repo_path = self.temp_dir / name
         tar = tarfile.open(repo_path)
         tar.extractall(self.temp_dir)
         tar.close()
@@ -29,8 +28,8 @@ class TemporaryRepository:
 
     def __exit__(self, type: Optional[Type[BaseException]], value: Optional[BaseException],
                  traceback: TracebackType):
-        if os.path.exists(self.temp_dir):
-           remove_tree(self.temp_dir)
+        if self.temp_dir.exists():
+            shutil.rmtree(self.temp_dir)
 
 
 @pytest.fixture
@@ -39,11 +38,10 @@ def repo() -> Repository:
         yield Repository(repo_path)
 
 
-def copy_template(repo: Repository, name : str, commit_message: str, parents: List[str] = None) -> str:
-    template_path = os.path.join(os.path.dirname(__file__), 'data', name)
-    # Use distuils implementation instead of shutil to allow for copying into
-    # a destination with existing files. See: https://stackoverflow.com/a/31039095/724251
-    copy_tree(template_path, repo.workdir)
+def copy_template(repo: Repository, name: str, commit_message: str,
+                  parents: List[str] = None) -> str:
+    template_path = Path(__file__).parent / 'data' / name
+    shutil.copytree(template_path, repo.workdir, dirs_exist_ok=True)
 
     # Stage the template changes
     repo.index.add_all()
