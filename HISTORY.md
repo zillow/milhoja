@@ -1,5 +1,10 @@
 # Release History
 
+## 0.5.3 (2024-12-12)
+
+- Update to to support more SSH key pair algorithms. (See https://docs.gitlab.com/ee/user/ssh.html#supported-ssh-key-types)
+- Modernize to use `Pathlib` instead of `os.path`.
+
 ## 0.5.2 (2024-11-12)
 
 - Update to pygit2 usage to enable usage of newer versions of the package while also maintaining backwards compatibility.

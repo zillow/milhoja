@@ -1,11 +1,11 @@
+from pathlib import Path
 from typing import Dict
 from unittest.mock import Mock, patch
 import pytest
 from click.testing import CliRunner
-from cookiecutter.exceptions import CookiecutterException
 from pygit2 import Repository
 from battenberg import cli
-from battenberg.errors import BattenbergException, MergeConflictException
+from battenberg.errors import MergeConflictException
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def test_upgrade(Battenberg: Mock, obj: Dict):
     assert result.output == ''
     Battenberg.return_value.upgrade.assert_called_once_with(
         checkout=None,
-        context_file='.cookiecutter.json',
+        context_file=Path('.cookiecutter.json'),
         merge_target=None,
         no_input=False
     )

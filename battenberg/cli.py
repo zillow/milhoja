@@ -1,15 +1,15 @@
-import os
 import sys
 import logging
 import subprocess
 from typing import Optional
 import click
+from pathlib import Path
 
 from battenberg.core import Battenberg
 from battenberg.utils import open_repository, open_or_init_repository
 from battenberg.errors import MergeConflictException
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # noqa: E402
+sys.path.append(Path(__file__).parent / '..')  # noqa: E402
 
 
 logging.basicConfig(level=logging.INFO)
@@ -23,9 +23,9 @@ logger.addHandler(handler)
 @click.group()
 @click.option(
     '-O',
-    default='.',
+    default=Path(),
     help='Direct the output of battenberg to this path instead of the current working directory.',
-    type=click.Path()
+    type=click.Path(path_type=Path)
 )
 @click.option(
     '--verbose',
@@ -94,9 +94,9 @@ def install(ctx, template: str, initial_branch: Optional[str], **kwargs):
 )
 @click.option(
     '--context-file',
-    default='.cookiecutter.json',
+    default=Path('.cookiecutter.json'),
     help='Path where we can find the output of the cookiecutter template context',
-    type=click.Path()
+    type=click.Path(path_type=Path)
 )
 @click.option(
     '--no-input',

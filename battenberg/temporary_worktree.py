@@ -1,10 +1,9 @@
-import os
 import shutil
 import tempfile
 import logging
 from types import TracebackType
 from typing import Optional, Type
-
+from pathlib import Path
 from pygit2 import Repository, Worktree
 from battenberg.errors import (
     RepositoryEmptyException,
@@ -25,8 +24,8 @@ class TemporaryWorktree:
         self.upstream = upstream
         self.name = name
         # Create the worktree working directory in the /tmp directory so it's out of the way.
-        self.tmp = tempfile.mkdtemp()
-        self.path = os.path.join(self.tmp, name)
+        self.tmp = Path(tempfile.mkdtemp())
+        self.path = self.tmp.joinpath(name)
         self.worktree = None
         self.repo = None
         self.empty = empty
@@ -48,10 +47,10 @@ class TemporaryWorktree:
 
         if self.empty:
             for entry in self.repo[self.repo.head.target].tree:
-                if os.path.isdir(os.path.join(self.path, entry.name)):
-                    shutil.rmtree(os.path.join(self.path, entry.name))
+                if self.path.joinpath(entry.name).is_dir():
+                    shutil.rmtree(self.path.joinpath(entry.name))
                 else:
-                    os.remove(os.path.join(self.path, entry.name))
+                    self.path.joinpath(entry.name).unlink()
 
         logger.debug(f'Successfully created temporary worktree at {self.path}.')
 

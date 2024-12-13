@@ -1,8 +1,8 @@
-import os
+from pathlib import Path
 from unittest.mock import Mock, patch
 import pytest
-from battenberg.errors import InvalidRepositoryException
-from battenberg.utils import open_repository, open_or_init_repository, construct_keypair
+from battenberg.errors import InvalidRepositoryException, KeypairMissingException
+from battenberg.utils import open_repository, open_or_init_repository, construct_keypair, ALGORITHMS
 
 
 @pytest.fixture
@@ -29,12 +29,10 @@ def Keypair() -> Mock:
         yield Keypair
 
 
-def test_open_repository():
-    path = 'test-path'
-    with pytest.assertRaises(ValueError) as e:
-        open_repository(path)
-
-    assert str(e.value) == f'{path} is not a valid repository path.'
+@pytest.fixture
+def MockPath() -> Mock:
+    with patch('battenberg.utils.Path') as MockPath:
+        yield MockPath
 
 
 def test_open_repository(Repository: Mock, discover_repository: Mock):
@@ -46,10 +44,8 @@ def test_open_repository(Repository: Mock, discover_repository: Mock):
 
 def test_open_repository_raises_on_invalid_path():
     path = 'test-path'
-    with pytest.raises(InvalidRepositoryException) as e:
+    with pytest.raises(InvalidRepositoryException, match=f'{path} is not a valid repository path.'):
         open_repository(path)
-
-    assert str(e.value) == f'{path} is not a valid repository path.'
 
 
 def test_open_or_init_repository_opens_repo(Repository: Mock, discover_repository: Mock):
@@ -61,7 +57,7 @@ def test_open_or_init_repository_opens_repo(Repository: Mock, discover_repositor
 
 
 def test_open_or_init_repository_initializes_repo(init_repository: Mock, Repository: Mock,
-        discover_repository: Mock):
+                                                  discover_repository: Mock):
     discover_repository.side_effect = Exception('No repo found')
 
     path = 'test-path'
@@ -81,8 +77,8 @@ def test_open_or_init_repository_initializes_repo(init_repository: Mock, Reposit
 
 
 @patch('battenberg.utils.subprocess')
-def test_open_or_init_repository_initializes_repo_with_inferred_initial_branch(subprocess: Mock,
-        init_repository: Mock, Repository: Mock, discover_repository: Mock):
+def test_open_or_init_repository_initializes_repo_with_inferred_initial_branch(
+        subprocess: Mock, init_repository: Mock, Repository: Mock, discover_repository: Mock):
     initial_branch = 'refs/heads/main'
     subprocess.run.return_value.stdout = f'ref: {initial_branch}    HEAD'
     discover_repository.side_effect = Exception('No repo found')
@@ -96,8 +92,9 @@ def test_open_or_init_repository_initializes_repo_with_inferred_initial_branch(s
 
 @pytest.mark.parametrize('stdout', ('', 'invalid-symref'))
 @patch('battenberg.utils.subprocess')
-def test_open_or_init_repository_initializes_repo_with_invalid_remote_branches(subprocess: Mock,
-        init_repository: Mock, Repository: Mock, discover_repository: Mock, stdout: str):
+def test_open_or_init_repository_initializes_repo_with_invalid_remote_branches(
+        subprocess: Mock, init_repository: Mock, Repository: Mock, discover_repository: Mock,
+        stdout: str):
     subprocess.run.return_value.stdout = stdout
     discover_repository.side_effect = Exception('No repo found')
 
@@ -107,16 +104,29 @@ def test_open_or_init_repository_initializes_repo_with_invalid_remote_branches(s
     assert open_or_init_repository(path, template) == repo
 
 
-def test_construct_keypair_defaults(Keypair: Mock):
+def test_construct_keypair_defaults(Keypair: Mock, MockPath: Mock, tmp_path: Path):
+    MockPath.return_value = tmp_path
+    public_key_path = tmp_path / 'id_rsa.pub'
+    public_key_path.touch()
+    private_key_path = tmp_path / 'id_rsa'
+    private_key_path.touch()
     construct_keypair()
-    user_home = os.path.expanduser('~')
-    Keypair.assert_called_once_with('git', f'{user_home}/.ssh/id_rsa.pub',
-                                    f'{user_home}/.ssh/id_rsa', '')
+    Keypair.assert_called_with('git', public_key_path,
+                               private_key_path, '')
 
 
-def test_construct_keypair(Keypair: Mock):
-    public_key_path = 'test-public_key_path'
-    private_key_path = 'test-private_key_path'
+@pytest.mark.parametrize('algorithm', ALGORITHMS.values())
+def test_construct_keypair(Keypair: Mock, tmp_path: Path, algorithm: dict[str, Path]):
+    public_key_path = tmp_path / algorithm['public']
+    public_key_path.touch()
+    private_key_path = tmp_path / algorithm['private']
+    private_key_path.touch()
     passphrase = 'test-passphrase'
-    construct_keypair(public_key_path, private_key_path, passphrase)
-    Keypair.assert_called_once_with('git', public_key_path, private_key_path, passphrase)
+    construct_keypair(tmp_path, passphrase)
+    Keypair.assert_called_with('git', public_key_path, private_key_path, passphrase)
+
+
+def test_construct_keypair_missing_key(MockPath: Mock, tmp_path: Path):
+    MockPath.return_value = tmp_path
+    with pytest.raises(KeypairMissingException):
+        construct_keypair()

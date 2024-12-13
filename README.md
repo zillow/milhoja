@@ -109,7 +109,7 @@ pytest
 To run linting:
 
 ```bash
-flake8 --config flake8.cfg battenberg
+flake8 --config flake8.cfg .
 ```
 
 ## Releasing a new version to PyPI

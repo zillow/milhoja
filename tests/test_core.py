@@ -43,7 +43,8 @@ def test_install_raises_template_conflict(repo: Repository, template_repo: Repos
 
 
 @patch('battenberg.core.cookiecutter')
-def test_install_raises_failed_hook(cookiecutter: Mock, repo: Repository, template_repo: Repository):
+def test_install_raises_failed_hook(cookiecutter: Mock, repo: Repository,
+                                    template_repo: Repository):
     cookiecutter.side_effect = FailedHookException
 
     battenberg = Battenberg(repo)
@@ -105,7 +106,7 @@ def test_update_merge_target(installed_repo: Repository, template_repo: Reposito
 
     template_upgrade_message = f'commit (merge): Upgraded template \'{template_repo.workdir}\''
     main_merge_ref = find_ref_from_message(installed_repo, template_upgrade_message,
-                                             ref_name=merge_target)
+                                           ref_name=merge_target)
     assert main_merge_ref
     # Ensure the merge commit on the merge target branch was derived from the template branch.
     assert template_upgrade_oid in set(installed_repo[main_merge_ref.oid_new].parent_ids)
