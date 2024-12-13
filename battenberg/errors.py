@@ -71,8 +71,8 @@ class InvalidRepositoryException(BattenbergException):
         super().__init__(f'{path} is not a valid repository path.')
 
 
-class KeypairException(BattenbergException):
+class KeypairMissingException(BattenbergException):
     """
-    Error raised when keypair could not be created.
+    Error raised when keypair files could not be located.
     """
     pass

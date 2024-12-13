@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest.mock import Mock, patch
 import pytest
-from battenberg.errors import InvalidRepositoryException, KeypairException
+from battenberg.errors import InvalidRepositoryException, KeypairMissingException
 from battenberg.utils import open_repository, open_or_init_repository, construct_keypair, ALGORITHMS
 
 
@@ -128,5 +128,5 @@ def test_construct_keypair(Keypair: Mock, tmp_path: Path, algorithm: dict[str, P
 
 def test_construct_keypair_missing_key(MockPath: Mock, tmp_path: Path):
     MockPath.return_value = tmp_path
-    with pytest.raises(KeypairException):
+    with pytest.raises(KeypairMissingException):
         construct_keypair()

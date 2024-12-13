@@ -3,7 +3,7 @@ import re
 import subprocess
 from typing import Optional
 from pygit2 import discover_repository, init_repository, Keypair, Repository
-from battenberg.errors import InvalidRepositoryException, KeypairException
+from battenberg.errors import InvalidRepositoryException, KeypairMissingException
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -90,8 +90,8 @@ def find_key_paths(ssh_path: Path):
         if public_key_path.exists() and private_key_path.exists():
             return public_key_path, private_key_path
 
-    raise KeypairException(f'Could not find keypair in {ssh_path}',
-                           f'Possible options include: {ALGORITHMS}')
+    raise KeypairMissingException(f'Could not find keypair in {ssh_path}',
+                                  f'Possible options include: {ALGORITHMS}')
 
 
 def construct_keypair(ssh_path: Path = None, passphrase: str = '') -> Keypair:
