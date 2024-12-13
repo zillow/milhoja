@@ -83,18 +83,18 @@ ALGORITHMS = {
 }
 
 
-def construct_keypair(public_key_path: Path = None, private_key_path: Path = None,
-                      passphrase: str = '') -> Keypair:
-    ssh_path = Path('~/.ssh').expanduser()
+def find_key_paths(ssh_path: Path):
     for algorithm in ALGORITHMS.values():
-        public_key_path = public_key_path or (ssh_path / algorithm['public'])
-        private_key_path = private_key_path or (ssh_path / algorithm['private'])
+        public_key_path = ssh_path / algorithm['public']
+        private_key_path = ssh_path / algorithm['private']
         if public_key_path.exists() and private_key_path.exists():
-            break
-        public_key_path = None
-        private_key_path = None
-    else:
-        raise KeypairException(f'Could not find keypair in {ssh_path}',
-                               f'Possible options include: {ALGORITHMS}')
+            return public_key_path, private_key_path
 
+    raise KeypairException(f'Could not find keypair in {ssh_path}',
+                           f'Possible options include: {ALGORITHMS}')
+
+
+def construct_keypair(ssh_path: Path = None, passphrase: str = '') -> Keypair:
+    ssh_path = ssh_path or Path('~/.ssh').expanduser()
+    public_key_path, private_key_path = find_key_paths(ssh_path)
     return Keypair("git", public_key_path, private_key_path, passphrase)

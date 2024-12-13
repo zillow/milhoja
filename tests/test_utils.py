@@ -116,13 +116,13 @@ def test_construct_keypair_defaults(Keypair: Mock, MockPath: Mock, tmp_path: Pat
 
 
 @pytest.mark.parametrize('algorithm', ALGORITHMS.values())
-def test_construct_keypair(Keypair: Mock, tmp_path: Path, algorithm: dict):
+def test_construct_keypair(Keypair: Mock, tmp_path: Path, algorithm: dict[str, Path]):
     public_key_path = tmp_path / algorithm['public']
     public_key_path.touch()
     private_key_path = tmp_path / algorithm['private']
     private_key_path.touch()
     passphrase = 'test-passphrase'
-    construct_keypair(public_key_path, private_key_path, passphrase)
+    construct_keypair(tmp_path, passphrase)
     Keypair.assert_called_with('git', public_key_path, private_key_path, passphrase)
 
 
